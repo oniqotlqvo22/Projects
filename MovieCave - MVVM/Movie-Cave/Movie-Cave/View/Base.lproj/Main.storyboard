@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Movie Screen View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController storyboardIdentifier="MovieScreenViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" customClass="MovieScreenViewController" customModule="Movie_Cave" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9sX-CC-ke7" customClass="NavigationView" customModule="Movie_Cave" customModuleProvider="target">
+                                <rect key="frame" x="16" y="714" width="361" height="103"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V8K-z9-fwj" customClass="MovieListView" customModule="Movie_Cave" customModuleProvider="target">
+                                <rect key="frame" x="16" y="186" width="361" height="520"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ldz-uA-ZoP" customClass="TestView" customModule="Movie_Cave" customModuleProvider="target">
+                                <rect key="frame" x="16" y="59" width="361" height="120"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ldz-uA-ZoP" secondAttribute="trailing" constant="16" id="3a8-CT-Ct8"/>
+                            <constraint firstItem="9sX-CC-ke7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="655" id="6Am-89-CUZ"/>
+                            <constraint firstItem="V8K-z9-fwj" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="127" id="BM2-IB-YIf"/>
+                            <constraint firstItem="ldz-uA-ZoP" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="QO0-PU-DC3"/>
+                            <constraint firstItem="ldz-uA-ZoP" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="Sp2-K8-O3E"/>
+                            <constraint firstItem="9sX-CC-ke7" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottomMargin" constant="-1" id="V42-Ly-4In"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="V8K-z9-fwj" secondAttribute="trailing" constant="16" id="XCS-Ae-QYT"/>
+                            <constraint firstItem="V8K-z9-fwj" firstAttribute="top" secondItem="ldz-uA-ZoP" secondAttribute="bottom" constant="7" id="a41-16-X1Y"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="9sX-CC-ke7" secondAttribute="trailing" constant="16" id="cRh-XV-PAB"/>
+                            <constraint firstItem="9sX-CC-ke7" firstAttribute="top" secondItem="V8K-z9-fwj" secondAttribute="bottom" constant="8" id="hnB-8J-WHW"/>
+                            <constraint firstItem="V8K-z9-fwj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="jRA-6n-WRW"/>
+                            <constraint firstItem="9sX-CC-ke7" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="jw8-iy-dfm"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="filterBarkView" destination="ldz-uA-ZoP" id="Q8i-1X-zRq"/>
+                        <outlet property="movieListView" destination="V8K-z9-fwj" id="AEq-2m-On1"/>
+                        <outlet property="navigationView" destination="9sX-CC-ke7" id="EB0-Q4-v53"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="23.664122137404579" y="3.5211267605633805"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
