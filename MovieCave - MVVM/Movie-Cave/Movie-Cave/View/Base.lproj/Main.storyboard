@@ -24,7 +24,7 @@
                                 <rect key="frame" x="16" y="186" width="361" height="520"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ldz-uA-ZoP" customClass="TestView" customModule="Movie_Cave" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ldz-uA-ZoP" customClass="FilterBarView" customModule="Movie_Cave" customModuleProvider="target">
                                 <rect key="frame" x="16" y="59" width="361" height="120"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
@@ -47,7 +47,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="filterBarkView" destination="ldz-uA-ZoP" id="Q8i-1X-zRq"/>
+                        <outlet property="filterBarView" destination="ldz-uA-ZoP" id="ZdR-KZ-Zit"/>
                         <outlet property="movieListView" destination="V8K-z9-fwj" id="AEq-2m-On1"/>
                         <outlet property="navigationView" destination="9sX-CC-ke7" id="EB0-Q4-v53"/>
                     </connections>

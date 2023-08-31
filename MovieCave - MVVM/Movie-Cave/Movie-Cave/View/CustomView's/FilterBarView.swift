@@ -7,56 +7,126 @@
 
 import UIKit
 
-class TestView: UIView {
+protocol FilterBarViewDelegate {
+    func genreButton(_ genre: String)
+    func searchBar(_ text: String)
+}
+
+class FilterBarView: UIView {
     
-    
-    @IBOutlet var view: TestView!
+    @IBOutlet private var view: FilterBarView!
+    private let searchBar = UISearchBar()
+    private var lastSearchTxt = ""
+    var filterBarDelegate: FilterBarViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
         setUpView()
+        searchBar.delegate = self
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         configureView()
         setUpView()
+        searchBar.delegate = self
     }
     
     private func configureView() {
-        guard let view = self.loadViewFromNib(nibName: "TestView") else { return }
+        guard let view = self.loadViewFromNib(nibName: "FilterBarView") else { return }
         
         view.frame = self.bounds
         self.addSubview(view)
     }
-
-    func setUpView() {
+    
+    @objc func buttonTapped(_ sender: UIButton) {
+        guard let senderTitle = sender.currentTitle else { return }
         
-        // Create a search bar
-        let searchBar = UISearchBar()
+        resetButtons(sender)
+        if sender.backgroundColor == .green {
+            sender.backgroundColor = .clear
+            return
+        }
+        highlightButton(sender)
+        
+        switch senderTitle {
+        case "Most popular":
+            filterBarDelegate?.genreButton(senderTitle)
+        case "Longest":
+            filterBarDelegate?.genreButton(senderTitle)
+        case "Raiting":
+            filterBarDelegate?.genreButton(senderTitle)
+        case "Newest":
+            filterBarDelegate?.genreButton(senderTitle)
+        default:
+            break
+        }
+    }
+    
+    private func resetButtons(_ ignoreButton: UIButton) {
+        guard let superview = ignoreButton.superview else { return }
+        
+        for case let button in superview.subviews {
+            if button != ignoreButton {
+                button.backgroundColor = .clear
+            }
+        }
+    }
+    
+    private func highlightButton(_ button: UIButton) {
+        button.backgroundColor = .green
+    }
+    
+}
+
+extension FilterBarView: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchBarText = searchBar.text else { return }
+
+        filterBarDelegate?.searchBar(searchBarText)
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if lastSearchTxt.isEmpty {
+            lastSearchTxt = searchText
+        }
+        
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.makeNetworkCall), object: lastSearchTxt)
+        lastSearchTxt = searchText
+        self.perform(#selector(self.makeNetworkCall), with: searchText, afterDelay: 0.5)
+    }
+    
+    @objc private func makeNetworkCall(sender: String) {
+        
+//        filterBarDelegate?.searchBar(sender)
+    }
+
+}
+
+extension FilterBarView {
+    
+    private func setUpView() {
+
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.placeholder = "Search"
         view.addSubview(searchBar)
         
-        // Add constraints to the search bar
         searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        
-        // Create a scroll view
+
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.showsHorizontalScrollIndicator = false
         view.addSubview(scrollView)
         
-        // Add constraints to the scroll view
         scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         scrollView.topAnchor.constraint(equalTo: searchBar.bottomAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
-        // Create a stack view to hold the buttons
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
@@ -64,19 +134,17 @@ class TestView: UIView {
         stackView.spacing = 8
         scrollView.addSubview(stackView)
         
-        // Add constraints to the stack view
         stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 8).isActive = true
         stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -8).isActive = true
         stackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
         stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
         
-        // Create buttons and add them to the stack view
-        let buttonsTitles: [String] = ["Most popular", "Longest", "Raiting", "Newest", "Genre"]
+        let buttonsTitles: [String] = ["Most popular", "Longest", "Raiting", "Newest"]
         for buttons in buttonsTitles {
             let button = UIButton(type: .system)
             button.setTitle(buttons, for: .normal)
-            button.backgroundColor = .black
+            button.backgroundColor = .white
             button.translatesAutoresizingMaskIntoConstraints = false
             button.heightAnchor.constraint(equalToConstant: 25).isActive = true
             button.layer.cornerRadius = 10
@@ -84,13 +152,7 @@ class TestView: UIView {
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
             stackView.addArrangedSubview(button)
-
         }
-    }
-    
-    @objc func buttonTapped(_ sender: UIButton) {
-        // Handle button tap event
-        print("Button tapped: \(sender.titleLabel?.text ?? "")")
     }
     
 }
