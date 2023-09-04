@@ -19,13 +19,19 @@ class MovieScreenViewModel {
         filteredMovies.send(movies)
     }
     
-    
-    
-    func searchMovies(_ text: String) {
-        searchedMovies.send(searchMovies(query: text))
-        print(searchMovies(query: text))
+    func reloadMovies() {
+        print(movies.count)
+        filteredMovies.send(movies)
     }
     
+    func searchMovies(_ text: String) {
+        filteredMovies.send(searchMovies(query: text))
+    }
+    
+    func changeValue(_ movie: Movie) {
+        movies.removeAll(where: {$0.movieTitle == movie.movieTitle})
+        movies.append(movie)
+    }
     
     
     func filterMovies(_ genre: String) {
@@ -43,9 +49,6 @@ class MovieScreenViewModel {
         }
     }
     
-    
-    
-    
     private func searchMovies(query: String) -> [Movie] {
       let filtered = movies.filter { movie in
           return movie.movieTitle.localizedCaseInsensitiveContains(query)
@@ -53,11 +56,6 @@ class MovieScreenViewModel {
       return filtered
     }
 
-  
-    
-    
-    
-    
     private func sortMoviesByViews() -> [Movie] {
         let sortedMovies = movies.sorted { (movie1, movie2) -> Bool in
             return movie1.viewed > movie2.viewed

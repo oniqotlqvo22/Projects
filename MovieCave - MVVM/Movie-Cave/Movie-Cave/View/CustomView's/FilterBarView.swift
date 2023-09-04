@@ -10,6 +10,7 @@ import UIKit
 protocol FilterBarViewDelegate {
     func genreButton(_ genre: String)
     func searchBar(_ text: String)
+    func searchBarDidClear()
 }
 
 class FilterBarView: UIView {
@@ -89,18 +90,23 @@ extension FilterBarView: UISearchBarDelegate {
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard searchBar.text != "" else {
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.makeNetworkCall), object: lastSearchTxt)
+            filterBarDelegate?.searchBarDidClear()
+            return
+        }
+        
         if lastSearchTxt.isEmpty {
             lastSearchTxt = searchText
         }
-        
+
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.makeNetworkCall), object: lastSearchTxt)
         lastSearchTxt = searchText
         self.perform(#selector(self.makeNetworkCall), with: searchText, afterDelay: 0.5)
     }
     
     @objc private func makeNetworkCall(sender: String) {
-        
-//        filterBarDelegate?.searchBar(sender)
+        filterBarDelegate?.searchBar(sender)
     }
 
 }
