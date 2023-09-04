@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FilterBarView: UIView {
+class test: UIView {
 
     
     @IBOutlet private weak var searchBark: UISearchBar!
