@@ -15,7 +15,7 @@ extension UIImage {
     ///   - sizeChange: The new size for the image.
     ///   - tintColor: The tint color to apply to the image.
     /// - Returns: The resized and tinted image.
-    func resizeImage(sizeChange: CGSize, tintColor: UIColor) -> UIImage {
+    func resizeSystemImage(sizeChange: CGSize, tintColor: UIColor) -> UIImage {
       UIGraphicsBeginImageContextWithOptions(sizeChange, false, 0)
       tintColor.set() // set tint color
       draw(in: CGRect(origin: .zero, size: sizeChange))

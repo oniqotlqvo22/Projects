@@ -7,25 +7,21 @@
 
 import UIKit
 
-protocol MoviesCollectionViewCellDelegate: AnyObject {
-    func didTapButton(in cell: MoviesCollectionViewCell, for movie: Movie)
-}
-
 class MoviesCollectionViewCell: UICollectionViewCell {
 
-    static let identifier = "MoviesCollectionViewCell"
+    //MARK: - Properties
     private var favoriteButton: UIButton!
-    private let emptyStar = UIImage(systemName: "star")?.resizeImage(sizeChange: CGSize(width: 35, height: 35), tintColor: .systemYellow)
-    private let filledStar = UIImage(systemName: "star.fill")?.resizeImage(sizeChange: CGSize(width: 35, height: 35), tintColor: .systemYellow)
-    
-    var imageView: UIImageView = {
+    private let emptyStar = UIImage(systemName: "star")?
+        .resizeSystemImage(sizeChange: CGSize(width: Constants.systemIconWidht, height: Constants.systemIconHeight), tintColor: .systemYellow)
+    private let filledStar = UIImage(systemName: "star.fill")?
+        .resizeSystemImage(sizeChange: CGSize(width: Constants.systemIconWidht, height: Constants.systemIconHeight), tintColor: .systemYellow)
+    private var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()
-    
-    var movie: Movie? {
+    var movie: MovieData? {
         didSet {
             guard let movie else { return }
             
@@ -33,12 +29,17 @@ class MoviesCollectionViewCell: UICollectionViewCell {
             ? favoriteButton.setImage(filledStar, for: .normal)
             : favoriteButton.setImage(emptyStar, for: .normal)
             
-            imageView.image = movie.image
+            imageView.image = UIImage().loadImageFromDocumentsDirectory(withName: movie.imageName ?? "")
         }
     }
 
+    //MARK: - Initiaizers
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.layer.borderWidth = 2
+        self.layer.borderColor = CGColor(red: 0.45, green: 0.20, blue: 0.25, alpha: 0.64)
+        self.layer.cornerRadius = 10
+        self.clipsToBounds = true
         contentView.addSubview(imageView)
         contentView.clipsToBounds = true
         
@@ -50,6 +51,7 @@ class MoviesCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
     }
     
+    //MARK: - Override Methods
     override func layoutSubviews() {
         super.layoutSubviews()
         imageView.frame = contentView.bounds
@@ -57,7 +59,6 @@ class MoviesCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        imageView.image = nil
     }
     
 }

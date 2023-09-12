@@ -7,6 +7,7 @@
 
 import UIKit
 
+//MARK: - FilterBarViewDelegate
 protocol FilterBarViewDelegate {
     func genreButton(_ genre: String)
     func searchBar(_ text: String)
@@ -15,11 +16,15 @@ protocol FilterBarViewDelegate {
 
 class FilterBarView: UIView {
     
+    //MARK: - IBOutlets
     @IBOutlet private var view: FilterBarView!
+    
+    //MARK: - Properties
     private let searchBar = UISearchBar()
     private var lastSearchTxt = ""
     var filterBarDelegate: FilterBarViewDelegate?
     
+    //MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -34,8 +39,9 @@ class FilterBarView: UIView {
         searchBar.delegate = self
     }
     
+    //MARK: - Private Methods
     private func configureView() {
-        guard let view = self.loadViewFromNib(nibName: "FilterBarView") else { return }
+        guard let view = self.loadViewFromNib(nibName: Constants.filterBarViewNibName) else { return }
         
         view.frame = self.bounds
         self.addSubview(view)
@@ -45,20 +51,20 @@ class FilterBarView: UIView {
         guard let senderTitle = sender.currentTitle else { return }
         
         resetButtons(sender)
-        if sender.backgroundColor == .green {
+        if sender.backgroundColor == Constants.filterButtonsHighLightColor {
             sender.backgroundColor = .clear
             return
         }
         highlightButton(sender)
         
         switch senderTitle {
-        case "Most popular":
+        case Constants.mostPopularFilterButton:
             filterBarDelegate?.genreButton(senderTitle)
-        case "Longest":
+        case Constants.longestFilterButton:
             filterBarDelegate?.genreButton(senderTitle)
-        case "Raiting":
+        case Constants.ratingFilterButton:
             filterBarDelegate?.genreButton(senderTitle)
-        case "Newest":
+        case Constants.newestFilterButton:
             filterBarDelegate?.genreButton(senderTitle)
         default:
             break
@@ -76,11 +82,12 @@ class FilterBarView: UIView {
     }
     
     private func highlightButton(_ button: UIButton) {
-        button.backgroundColor = .green
+        button.backgroundColor = Constants.filterButtonsHighLightColor
     }
     
 }
 
+//MARK: - UISearchBarDelegate
 extension FilterBarView: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -111,12 +118,20 @@ extension FilterBarView: UISearchBarDelegate {
 
 }
 
+//MARK: - FilterBarView UI setup
 extension FilterBarView {
     
     private func setUpView() {
 
+        view.layer.borderWidth = 3
+        view.layer.borderColor = CGColor(red: 0.45, green: 0.20, blue: 0.25, alpha: 0.65)
+        view.layer.cornerRadius = 5
+        view.backgroundColor = .black
+        self.backgroundColor = .black
         searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.placeholder = "Search"
+        searchBar.placeholder = Constants.searchBarPlaceHolder
+        searchBar.barTintColor = .black
+        searchBar.searchTextField.backgroundColor = .white
         view.addSubview(searchBar)
         
         searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -146,14 +161,17 @@ extension FilterBarView {
         stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
         
-        let buttonsTitles: [String] = ["Most popular", "Longest", "Raiting", "Newest"]
+        let buttonsTitles: [String] = [Constants.mostPopularFilterButton,
+                                       Constants.longestFilterButton,
+                                       Constants.ratingFilterButton,
+                                       Constants.newestFilterButton]
         for buttons in buttonsTitles {
             let button = UIButton(type: .system)
             button.setTitle(buttons, for: .normal)
-            button.backgroundColor = .white
+            button.backgroundColor = .clear
             button.translatesAutoresizingMaskIntoConstraints = false
             button.heightAnchor.constraint(equalToConstant: 25).isActive = true
-            button.layer.cornerRadius = 10
+            button.layer.cornerRadius = 5
             button.layer.masksToBounds = true
             button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)

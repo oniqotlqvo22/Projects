@@ -10,44 +10,66 @@ import Combine
 
 class MovieScreenViewController: UIViewController {
 
+    //MARK: - IBOutlets
     @IBOutlet weak var navigationView: NavigationView!
     @IBOutlet weak var movieListView: MovieListView!
     @IBOutlet weak var filterBarView: FilterBarView!
-    private let viewModel = MovieScreenViewModel(movies: [
-        GetMovies.yasuke, GetMovies.dune, GetMovies.rurouniKenshin, GetMovies.guardiansOfGalaxy, GetMovies.oppenheimer, GetMovies.parasite
-    ])
+    
+    //MARK: - Properties
+    private let coreData = CoreDataManager.shared
+    private lazy var viewModel: MovieScreenViewModelProtocol = {
+      return MovieScreenViewModel(coreData: coreData)
+    }()
     private var cancellables: [AnyCancellable] = []
     
+    //MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         filterBarView.filterBarDelegate = self
         movieListView.delegate = self
-        
+        navigationView.delegate = self
         viewModel.filteredMovies
             .sink { [weak self] filteredMovies in
             guard let filteredMovies else { return }
             
             self?.movieListView.movies = filteredMovies
         }.store(in: &cancellables)
-        
-        viewModel.searchedMovies
-            .sink { [weak self] filteredMovies in
-            guard let filteredMovies else { return }
-            
-            self?.movieListView.movies = filteredMovies
-        }.store(in: &cancellables)
     }
     
 }
 
+//MARK: - NavigationViewDelegate
+extension MovieScreenViewController: NavigationViewDelegate {
+    
+    func buttonTapped() {
+        guard let addMovieVC = AddMovieViewController.initFromStoryBoard() else { return }
+
+        addMovieVC.movieCompletion = { [weak self] movie in
+            
+            self?.viewModel.movie = movie
+        }
+        navigationController?.pushViewController(addMovieVC, animated: true)
+    }
+    
+}
+
+//MARK: - MovieListViewDelegate
 extension MovieScreenViewController: MovieListViewDelegate {
     
-    func didTapButton(in cell: MoviesCollectionViewCell, for movie: Movie) {
-        viewModel.changeValue(movie)
+    func movieTapedFromCell(for movie: MovieData) {
+        guard let movieDetailsVC = MovieDetailsViewController.initFromStoryBoard() else { return }
+
+        movieDetailsVC.movie = movie
+        navigationController?.pushViewController(movieDetailsVC, animated: true)
+    }
+
+    func favoriteButtonTapped(in cell: MoviesCollectionViewCell) {
+        viewModel.changeValue()
     }
     
 }
 
+//MARK: - FilterBarViewDelegate
 extension MovieScreenViewController: FilterBarViewDelegate {
     func searchBarDidClear() {
         viewModel.reloadMovies()
@@ -62,3 +84,5 @@ extension MovieScreenViewController: FilterBarViewDelegate {
         viewModel.filterMovies(genre)
     }
 }
+
+

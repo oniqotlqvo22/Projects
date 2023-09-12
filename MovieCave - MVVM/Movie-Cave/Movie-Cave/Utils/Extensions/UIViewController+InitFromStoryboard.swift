@@ -10,7 +10,7 @@ import UIKit
 
 //MARK: - Conveniece initalizer extension for ViweController
 extension UIViewController {
-    
+
     ///   Convenience initializer
     /// - Parameter storyBoardName: Name of the storyboard
     /// - Returns: Storyboard
@@ -19,5 +19,5 @@ extension UIViewController {
         let controller = storyboard.instantiateViewController(withIdentifier: String(describing: self))
         return controller as? Self
     }
-    
+
 }
