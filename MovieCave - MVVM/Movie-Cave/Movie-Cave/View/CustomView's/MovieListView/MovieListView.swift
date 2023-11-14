@@ -8,7 +8,7 @@
 import UIKit
 
 //MARK: - MovieListViewDelegate
-protocol MovieListViewDelegate {
+protocol MovieListViewDelegate: NSObject {
     func favoriteButtonTapped(in cell: MoviesCollectionViewCell)
     func movieTapedFromCell(for movie: MovieData)
 }
@@ -25,7 +25,7 @@ class MovieListView: UIView {
         }
     }
     private var favoriteButton: UIButton!
-    var delegate: MovieListViewDelegate?
+    weak var delegate: MovieListViewDelegate?
     
     //MARK: - Initializers
     override init(frame: CGRect) {
@@ -35,7 +35,6 @@ class MovieListView: UIView {
                                 forCellWithReuseIdentifier: Constants.MoviesCollectionCellidentifier)
         collectionView.delegate = self
         collectionView.dataSource = self
-        
     }
     
     required init?(coder: NSCoder) {
@@ -45,7 +44,6 @@ class MovieListView: UIView {
                                 forCellWithReuseIdentifier: Constants.MoviesCollectionCellidentifier)
         collectionView.delegate = self
         collectionView.dataSource = self
-        
     }
     
     //MARK: - Private Methods
@@ -63,6 +61,10 @@ class MovieListView: UIView {
 
 //MARK: - CollectionViewDelegate & DataSource & DelegateFlowLayout
 extension MovieListView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
@@ -97,8 +99,8 @@ extension MovieListView: UICollectionViewDelegate, UICollectionViewDataSource, U
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (self.frame.width / 2) - 1,
-                      height: (self.frame.width / 2) - 1)
+        return CGSize(width: (self.frame.width / 2),
+                      height: (self.frame.width / 2))
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {

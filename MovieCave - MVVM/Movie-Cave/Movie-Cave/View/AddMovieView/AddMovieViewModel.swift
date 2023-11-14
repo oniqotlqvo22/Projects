@@ -36,14 +36,14 @@ protocol AddMovieViewModelProtocol {
     /// - Parameter imageTitle: The movie description text
     func uploadMovieImage(imageTitle: String)
     
-    var buttonValidator: CurrentValueSubject<Bool, Never> { get }
+    var buttonValidator: CurrentValueSubject<Bool?, Never> { get }
 //    func validateButton()
 }
 
 class AddMovieViewModel: AddMovieViewModelProtocol {
 
     //MARK: - Properties
-    var buttonValidator: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
+    var buttonValidator: CurrentValueSubject<Bool?, Never> = CurrentValueSubject(nil)
     var movie: CurrentValueSubject<MovieData?, Never> = CurrentValueSubject(nil)
     private var dataMovie: MovieData
     private let coreData: CoreDataManager

@@ -1,13 +1,13 @@
 //
-//  MoviesCollectionViewCell.swift
-//  Movie-Cave
+//  CollectionViewCell.swift
+//  MovieCave
 //
-//  Created by Admin on 30.08.23.
+//  Created by Admin on 28.09.23.
 //
 
 import UIKit
 
-class MoviesCollectionViewCell: UICollectionViewCell {
+class CollectionViewReusableCell: UICollectionViewCell {
 
     //MARK: - Properties
     private var favoriteButton: UIButton!
@@ -21,15 +21,21 @@ class MoviesCollectionViewCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         return imageView
     }()
-    var movie: MovieData? {
+
+    var tvSeries: TVSeriesResults? {
+        didSet {
+            guard let tvSeries else { return }
+            
+            imageView.downloaded(from: Constants.moviePosterURL + (tvSeries.posterPath ?? "no image"), contentMode: .scaleAspectFit)
+        }
+    }
+    
+    var movie: MoviesModel? {
         didSet {
             guard let movie else { return }
             
-            movie.favorite
-            ? favoriteButton.setImage(filledStar, for: .normal)
-            : favoriteButton.setImage(emptyStar, for: .normal)
-            
-            imageView.image = UIImage().loadImageFromDocumentsDirectory(withName: movie.imageName ?? "")
+            favortieStarButtonChange(movie: movie)
+            imageView.downloaded(from: Constants.moviePosterURL + (movie.movieResults.posterPath ?? "no image"), contentMode: .scaleAspectFit)
         }
     }
 
@@ -37,7 +43,6 @@ class MoviesCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.layer.borderWidth = 2
-        self.layer.borderColor = CGColor(red: 0.45, green: 0.20, blue: 0.25, alpha: 0.64)
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
         contentView.addSubview(imageView)
@@ -59,6 +64,15 @@ class MoviesCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        imageView.image = nil
+    }
+    
+    private func favortieStarButtonChange(movie: MoviesModel) {
+        DispatchQueue.main.async {
+            movie.isFavorite
+            ? self.favoriteButton.setImage(self.filledStar, for: .normal)
+            : self.favoriteButton.setImage(self.emptyStar, for: .normal)
+        }
     }
     
 }

@@ -124,7 +124,9 @@ extension AddMovieViewController {
     
     private func setUpBinders() {
         
-        viewModel.buttonValidator.sink { isValid in
+        viewModel.buttonValidator.sink { [weak self] isValid in
+            guard let self,
+                  let isValid else { return }
             
             self.doneButton.isEnabled = isValid
         }.store(in: &cancellables)
