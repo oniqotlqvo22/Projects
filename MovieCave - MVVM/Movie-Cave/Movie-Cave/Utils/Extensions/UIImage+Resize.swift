@@ -10,6 +10,9 @@ import UIKit
 
 extension UIImage {
     
+    /// Resizes an image to a target size while maintaining the aspect ratio
+    /// - Parameter targetSize: The size to resize the image to
+    /// - Returns: A resized UIImage or nil if resizing fails
     func resizeImage(targetSize: CGSize) -> UIImage? {
             let scaledSize = aspectFill(to: targetSize)
             

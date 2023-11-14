@@ -7,9 +7,10 @@
 
 import Foundation
 
+//MARK: - UserModel
 struct User {
     var userName: String
-    var favorites: [Movie]
+    var favorites: [MovieData]
     var password: String
     var firstName: String
     var lastName: String
@@ -20,7 +21,7 @@ struct User {
 struct getUser {
     
     static var filip = User(userName: "oniq",
-                            favorites: [GetMovies.oppenheimer, GetMovies.dune],
+                            favorites: [],
                             password: "5589",
                             firstName: "Filip",
                             lastName: "Mileshkov",
