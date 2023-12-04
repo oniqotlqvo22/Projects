@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MediaDetails {
+struct MediaDetails: Equatable {
     var title: String
     var overview: String
     var id: Int
@@ -18,13 +18,13 @@ struct MediaDetails {
     var gernes: [String]
 }
 
-struct MediaCast {
+struct MediaCast: Equatable {
     var name: String
     var poster: String?
 
 }
 
-struct MediaVideos {
+struct MediaVideos: Equatable {
     var key: String
     var name: String
 }

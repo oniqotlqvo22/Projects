@@ -9,7 +9,7 @@ import Foundation
 
 //MARK: - MainTabBarViewModelProtocl
 protocol MainTabBarViewModelProtocol {
-    func getItNow(tabBar: String)
+    func tabBarItemPressed(tabBar: String)
 }
 
 class MainTabBarViewModel: MainTabBarViewModelProtocol {
@@ -22,7 +22,7 @@ class MainTabBarViewModel: MainTabBarViewModelProtocol {
         self.coordinator = coordinator
     }
     
-    func getItNow(tabBar: String) {
-//        coordinator?.tabBarItemClicked(itemName: tabBar)
+    func tabBarItemPressed(tabBar: String) {
+
     }
 }

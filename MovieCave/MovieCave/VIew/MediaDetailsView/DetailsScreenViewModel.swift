@@ -60,9 +60,9 @@ class DetailsScreenViewModel: DetailsScreenViewModelProtocol {
                                                 avrgVote: "\(series.voteAverage.roundedToTwoDecimalPlaces())",
                                                 releaseDate: series.firstAirDate,
                                                 gernes: series.genres.map{$0.name})
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self?.mediaDetails.send(seriesDetails)
-                }
+//                }
             case .failure(let error):
                 self?.popUpMessage.send(error.localizedDescription)
             }
@@ -119,9 +119,9 @@ class DetailsScreenViewModel: DetailsScreenViewModelProtocol {
                                                 avrgVote: "\(series.voteAverage.roundedToTwoDecimalPlaces())",
                                                 releaseDate: series.releaseDate,
                                                 gernes: series.genres.map{$0.name})
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self?.mediaDetails.send(seriesDetails)
-                }
+//                }
             case .failure(let error):
                 self?.popUpMessage.send(error.localizedDescription)
             }

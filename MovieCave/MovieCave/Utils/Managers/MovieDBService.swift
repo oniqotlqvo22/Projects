@@ -176,7 +176,7 @@ class MovieDBService: MovieDBServiceProtocol {
                     print(error as Any)
                 } else {
                     //            let httpResponse = response as? HTTPURLResponse
-                    print("SUCCESS REMOVIGN MOVIE FROM LIST")
+                    print("SUCCESS REMOVING MOVIE FROM LIST")
                 }
             }
             

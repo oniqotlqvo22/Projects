@@ -28,7 +28,7 @@ class MoviesViewCoordinator: Coordinator, MoviesViewCoordinatorProtocol {
     override func start() {
         guard let moviesVC = MoviesViewController.initFromStoryBoard() else { return }
 
-        moviesVC.viewModel = MoviesViewModel(coordinator: self, movieDBService: MovieDBService(), with: list)
+        moviesVC.viewModel = MoviesViewModel(coordinator: self, movieDBService: MovieDBService(), with: list, with: .topRated)
         identifier = Constants.moviesViewCoordinatorID
         navController.navigationBar.prefersLargeTitles = false
         navController.pushViewController(moviesVC, animated: true)

@@ -24,15 +24,17 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     //MARK: - Properties
     private weak var coordinator: TVSeriesViewCoordinator?
     private let movieDBService: MovieDBServiceProtocol
-    private var currentPage = 1
-    private var list: TVSeriesLists = .topRated
+    private var currentPage: Int
+    private var list: TVSeriesLists
     var series: CurrentValueSubject<[TVSeriesResults]?, Never> = CurrentValueSubject(nil)
     var popUpMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
     
     //MARK: - Initializer
-    init(coordinator: TVSeriesViewCoordinator, movieDBService: MovieDBServiceProtocol) {
+    init(coordinator: TVSeriesViewCoordinator, movieDBService: MovieDBServiceProtocol, currentPage: Int, list: TVSeriesLists) {
         self.coordinator = coordinator
         self.movieDBService = movieDBService
+        self.currentPage = currentPage
+        self.list = list
         fetchSeries(withFilter: list, on: currentPage)
     }
     
@@ -72,14 +74,14 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
         movieDBService.operateWithAPI(type: .tvSeries, key: withFilter.tvSeriesList(), page: page, operationType: .fetchSeries, httpMethod: .get) { [weak self] (result: Result<TVSeriesData, MovieDBErrors>) in
             guard let self else { return }
             
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 switch result {
                 case .success(let series):
                     self.series.send(series.results)
                 case .failure(let error):
                     self.popUpMessage.send(error.localizedDescription)
                 }
-            }
+//            }
         }
     }
     
@@ -88,14 +90,14 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
             (result: Result<TVSeriesData, MovieDBErrors>) in
             guard let self else { return }
             
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 switch result {
                 case .success(let series):
                     self.series.send(series.results)
                 case .failure(let error):
                     self.popUpMessage.send(error.localizedDescription)
                 }
-            }
+//            }
         }
     }
 

@@ -29,16 +29,17 @@ class MoviesViewModel: MoviesViewModelProtocol {
     private let movieDBService: MovieDBServiceProtocol
     private var list: MoviesList
     private var currentPage = 1
-    private var genreList: MovieGenreLists = .topRated
+    private var genreList: MovieGenreLists
     var movies: CurrentValueSubject<[MoviesModel]?, Never> = CurrentValueSubject(nil)
     var isFavorite: CurrentValueSubject<Bool?, Never> = CurrentValueSubject(nil)
     var popUpMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
     
     //MARK: - Initializer
-    init(coordinator: MoviesViewCoordinator, movieDBService: MovieDBServiceProtocol, with list: MoviesList) {
+    init(coordinator: MoviesViewCoordinator, movieDBService: MovieDBServiceProtocol, with list: MoviesList, with genreList: MovieGenreLists) {
         self.coordinator = coordinator
         self.movieDBService = movieDBService
         self.list = list
+        self.genreList = genreList
         fetchMovies(withFilter: genreList, on: currentPage)
     }
     
@@ -78,14 +79,14 @@ class MoviesViewModel: MoviesViewModelProtocol {
         movieDBService.operateWithAPI(type: .movies, key: text, page: currentPage, operationType: .searchMovieByTitle, httpMethod: .get) { [weak self] (result: Result<MoviesData, MovieDBErrors>) in
             guard let self else { return }
             
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 switch result {
                 case .success(let movies):
                     self.favoritesOrNot(movies: movies)
                 case .failure(let error):
                     self.popUpMessage.send(error.localizedDescription)
                 }
-            }
+//            }
         }
     }
     
@@ -93,25 +94,25 @@ class MoviesViewModel: MoviesViewModelProtocol {
         movieDBService.operateWithAPI(type: .movies, key: withFilter.movieList(), page: page, operationType: .fetchMovies, httpMethod: .get) { [weak self] (result: Result<MoviesData, MovieDBErrors>) in
             guard let self else { return }
 
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 switch result {
                 case .success(let movies):
                     self.favoritesOrNot(movies: movies)
                 case .failure(let error):
                     self.popUpMessage.send(error.localizedDescription)
                 }
-            }
+//            }
         }
     }
     
     private func favoritesOrNot(movies: MoviesData) {
-        switch self.list {
+        switch list {
         case .allMovies:
-            self.movieDBService.createMovieArray(moviesFromApi: movies.results) { moviesArray in
+            movieDBService.createMovieArray(moviesFromApi: movies.results) { moviesArray in
                 self.movies.send(moviesArray)
             }
         case .favorites:
-            self.movieDBService.fetchFavoriteMovies(moviesFromApi: movies.results) { favoriteMovieArray in
+            movieDBService.fetchFavoriteMovies(moviesFromApi: movies.results) { favoriteMovieArray in
                 self.movies.send(favoriteMovieArray)
             }
         }

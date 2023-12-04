@@ -24,6 +24,5 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate {
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         guard let title = item.title else { return }
         
-        viewModel?.getItNow(tabBar: title)
     }
 }

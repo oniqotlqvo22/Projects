@@ -27,7 +27,7 @@ class TVSeriesViewCoordinator: Coordinator, TVSeriesViewCoordinatorProtocol {
         guard let tvSeriesVC = TVSeriesViewController.initFromStoryBoard() else { return }
 
         
-        tvSeriesVC.viewModel = TVSeriesViewModel(coordinator: self, movieDBService: MovieDBService())
+        tvSeriesVC.viewModel = TVSeriesViewModel(coordinator: self, movieDBService: MovieDBService(), currentPage: 1, list: .topRated)
         identifier = Constants.tvSeriesViewCoordinatorID
         navController.navigationBar.prefersLargeTitles = false
         navController.pushViewController(tvSeriesVC, animated: true)
