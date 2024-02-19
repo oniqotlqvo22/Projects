@@ -23,9 +23,9 @@ class PopUpView: UIView {
     init(frame: CGRect, inVC: UIViewController, messageLabelText: String) {
         super.init(frame: frame)
         guard let view = loadViewFromNib(nibName: Constants.popUpViewNibName) else { return }
-        view.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        view.frame = CGRect(x: Constants.popUpViewFrameX, y: Constants.popUpViewFrameY, width: frame.width, height: frame.height)
         addSubview(view)
-        autoDismissTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false, block: { [weak self] _ in
+        autoDismissTimer = Timer.scheduledTimer(withTimeInterval: Constants.popUpViewDismissTimeInterval, repeats: false, block: { [weak self] _ in
           self?.hide()
         })
         messageLabel.text = messageLabelText
@@ -33,9 +33,9 @@ class PopUpView: UIView {
     
     //MARK: - Methods
     private func hide() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.alpha = 0.2
-            self.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        UIView.animate(withDuration: Constants.popUpViewHideAnimationDuration, animations: {
+            self.alpha = Constants.popUpViewHideAnimationAlpha
+            self.transform = Constants.popUpViewHideAnimationTransform
         }) { _ in
             self.removeFromSuperview()
         }

@@ -32,15 +32,15 @@ class ProfileViewController: UIViewController {
     }
     
     //MARK: - IBActions
-    @IBAction func logOutButton(_ sender: UIButton) {
+    @IBAction private func logOutButton(_ sender: UIButton) {
         viewModel?.logOut()
     }
     
-    @IBAction func favoriteMoviesButton(_ sender: UIButton) {
+    @IBAction private func favoriteMoviesButton(_ sender: UIButton) {
         viewModel?.goToFavoriteMovies()
     }
     
-    @IBAction func editPersonalButton(_ sender: UIButton) {
+    @IBAction private func editPersonalButton(_ sender: UIButton) {
         viewModel?.editPersonalInfo()
     }
     

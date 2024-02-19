@@ -71,8 +71,8 @@ class ReusableListView: UIView {
     @IBOutlet private weak var collectionView: UICollectionView!
     
     //MARK: - Properties
-    private var stackView: UIStackView!
-    private var cancellables = [AnyCancellable]()
+    private var stackView: UIStackView?
+    private var cancellables: [AnyCancellable] = []
     weak var filterButtonsDelegate: FilterButtonsDelegate?
     weak var searchBarTextFiledPublisherDelegate: SearchBarTextFieldTextPublisherDelegate?
     
@@ -101,7 +101,7 @@ class ReusableListView: UIView {
     
     private func loadSearchBarTextFiledPublisher() {
         searchBar.searchTextField.publisher
-            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .debounce(for: .milliseconds(Constants.reusableListViewSearchTextDebounce), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] text in
                 
@@ -110,6 +110,8 @@ class ReusableListView: UIView {
     }
     
     private func setUpView() {
+//        guard var stackView else { return }
+        
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.placeholder = Constants.searchBarPlaceHolder
         searchBar.barStyle = .black
@@ -130,18 +132,19 @@ class ReusableListView: UIView {
         scrollView.bottomAnchor.constraint(equalTo: filterBarView.bottomAnchor).isActive = true
 
         stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.spacing = 8
-        scrollView.addSubview(stackView)
+        stackView?.translatesAutoresizingMaskIntoConstraints = false
+        stackView?.axis = .horizontal
+        stackView?.alignment = .center
+        stackView?.spacing = Constants.reusableListViewStackViewSpacing
+        scrollView.addSubview(stackView ?? UIStackView())
 
-        stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 8).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -8).isActive = true
-        stackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-        stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
-
+        stackView?.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor,
+                                           constant: Constants.stackViewLeadingAnchorConstraint).isActive = true
+        stackView?.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor,
+                                            constant: Constants.stackViewTrailingAnchorConstraint).isActive = true
+        stackView?.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        stackView?.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        stackView?.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
     }
     
     private func resetButtons(_ ignoreButton: UIButton) {
@@ -179,17 +182,19 @@ class ReusableListView: UIView {
 extension ReusableListView: ReusableListViewProtocol {
     
     func filterButtons(buttonTitles: [String]) {
+//        guard let stackView else { return }
+        
         for buttonTitle in buttonTitles {
             let button = UIButton(type: .system)
             button.setTitle(buttonTitle, for: .normal)
             button.backgroundColor = .clear
             button.translatesAutoresizingMaskIntoConstraints = false
-            button.heightAnchor.constraint(equalToConstant: 25).isActive = true
-            button.layer.cornerRadius = 5
+            button.heightAnchor.constraint(equalToConstant: Constants.filterButtonHeightAnchorConstraint).isActive = true
+            button.layer.cornerRadius = Constants.filterButtonLayerCornerRadius
             button.layer.masksToBounds = true
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: Constants.filterButtonTitleLabelFontSize)
             button.addTarget(self, action: #selector(filterButtonTapped(_:)), for: .touchUpInside)
-            stackView.addArrangedSubview(button)
+            stackView?.addArrangedSubview(button)
         }
     }
     
@@ -202,7 +207,7 @@ extension ReusableListView: ReusableListViewProtocol {
     }
 
     func reloadCollectionViewSections() {
-        collectionView.reloadSections(IndexSet(integer: 0))
+        collectionView.reloadSections(IndexSet(integer: Constants.collectionViewReloadSectionsInteger))
     }
 
     func reloadCellItems(at idextPath: [IndexPath]) {

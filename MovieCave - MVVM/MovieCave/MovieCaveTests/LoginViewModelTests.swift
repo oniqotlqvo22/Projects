@@ -19,7 +19,7 @@ final class LoginViewModelTests: XCTestCase {
         coordinatorMock = MockCoordinator(successType: .happy)
         coordinatorMock.parentCoordinator = coordinatorMock
         movieDBManagerMock = MovieDBManagerMock(succesCase: .happy, moviesList: .allMovies)
-        viewModel = LoginViewModel(coordinator: coordinatorMock, apiService: movieDBManagerMock)
+        viewModel = LoginViewModel(logInCoordinatorDelegate: coordinatorMock, apiService: movieDBManagerMock)
     }
 
     override func tearDown() {

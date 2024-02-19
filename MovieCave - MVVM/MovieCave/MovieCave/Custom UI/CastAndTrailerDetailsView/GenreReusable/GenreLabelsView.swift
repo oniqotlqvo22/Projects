@@ -7,21 +7,28 @@
 
 import UIKit
 
-class GenreLabelsView: UIView {
+protocol GenreLabelsViewProtocol: UIView {
+    
+    /// Sets up genre labels based on the provided genres.
+    /// - Parameter genres: An array of strings representing the genres.
+    func setUpGenreLabels(with genres: [String])
+}
+
+class GenreLabelsView: UIView, GenreLabelsViewProtocol {
     
     //MARK: - Properties
-    private var genreLabels = [GenreView]()
+    private var genreLabels: [GenreView] = []
     
     //MARK: - Public Methods
     func setUpGenreLabels(with genres: [String]) {
         removeAllGenreLabels()
         
-        var xPosition: CGFloat = 8
-        var yPosition: CGFloat = 0
-        var row = 0
-        var currentRowHighestElement: CGFloat = 0
+        var xPosition: CGFloat = Constants.genreLabelXposition
+        var yPosition: CGFloat = Constants.genreLabelYposition
+        var row = Constants.genreLabelStartingRowPosition
+        var currentRowHighestElement: CGFloat = Constants.genreLabelStartingRowHighestElement
         
-        for genre in genres {
+        genres.forEach { genre in
             let genreLabel = GenreView(text: genre)
             
             if genreLabel.frame.size.height > currentRowHighestElement {
@@ -29,18 +36,18 @@ class GenreLabelsView: UIView {
             }
             
             if genreLabel.frame.width >= frame.size.width - xPosition {
-                row += 1
-                yPosition += currentRowHighestElement + 32
-                xPosition = 8
-                currentRowHighestElement = 0
+                row += Constants.genreLabelRowPlus
+                yPosition += currentRowHighestElement + Constants.additionalYposicitonSpacing
+                xPosition = Constants.genreLabelXposition
+                currentRowHighestElement = Constants.genreLabelStartingRowHighestElement
             }
             
-            genreLabel.frame.origin = CGPoint(x: xPosition, y: yPosition + 16)
+            genreLabel.frame.origin = CGPoint(x: xPosition, y: yPosition + Constants.genreLabelAdditionalFrameOriginY)
             
             addSubview(genreLabel)
             genreLabels.append(genreLabel)
             
-            xPosition += genreLabel.frame.size.width + 16
+            xPosition += genreLabel.frame.size.width + Constants.additionalXpositionSizeWidth
         }
     }
     

@@ -7,19 +7,26 @@
 
 import UIKit
 
-class PopulatedCastView: UIStackView {
+protocol PopulatedCastViewProtocol: UIStackView {
+    
+    /// Sets up cast views based on the provided cast members.
+    /// - Parameter cast: An array of `MediaCast` representing the cast members.
+    func setUpCast(with cast: [MediaCast])
+}
+
+class PopulatedCastView: UIStackView, PopulatedCastViewProtocol {
     
     //MARK: - Properties
-    private var castViews = [TrailerView]()
+    private var castViews: [TrailerView] = []
     
     //MARK: - Public Methods
     func setUpCast(with cast: [MediaCast]) {
-        self.spacing = 8
+        spacing = Constants.castViewSpacing
         for actor in cast {
             guard let castPoster = actor.poster else { return }
             
             let cast = CastView()
-            cast.configureView(with: 70, posterKey: castPoster, castName: actor.name)
+            cast.configureView(with: Constants.castViewWidhtConstraint, posterKey: castPoster, castName: actor.name)
             addArrangedSubview(cast)
         }
     }

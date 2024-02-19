@@ -23,8 +23,8 @@ class LoginViewModel: LoginViewModelProtocol {
     private let apiService: MovieDBServiceProtocol
     
     //MARK: - Initializer
-    init(coordinator: LoginCoordinatorDelegate, apiService: MovieDBServiceProtocol) {
-        self.logInCoordinatorDelegate = coordinator
+    init(logInCoordinatorDelegate: LoginCoordinatorDelegate, apiService: MovieDBServiceProtocol) {
+        self.logInCoordinatorDelegate = logInCoordinatorDelegate
         self.apiService = apiService
     }
 

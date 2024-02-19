@@ -13,12 +13,12 @@ class BubblyLabel: UILabel {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        layer.cornerRadius = bounds.height / 2
-        backgroundColor = UIColor(red: 0.8, green: 0.9, blue: 1.0, alpha: 1.0)
+        layer.cornerRadius = bounds.height / Constants.bubblyLabelCornerRadiusDevider
+        backgroundColor = Constants.bubblyLabelBackgroundColor
 
         layer.shadowColor = UIColor.darkGray.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 4
-        layer.shadowOpacity = 0.5
+        layer.shadowOffset = Constants.bubblyLabelLayerShadowOffset
+        layer.shadowRadius = Constants.bubblyLabelLayerShadowRadius
+        layer.shadowOpacity = Constants.bubblyLabelLayerShadowOpacity
     }
 }

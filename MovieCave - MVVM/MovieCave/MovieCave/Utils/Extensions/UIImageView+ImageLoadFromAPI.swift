@@ -9,7 +9,7 @@ import UIKit
 
 extension UIImageView {
 
-    private func downloaded(from url: URL, contentMode mode: ContentMode = .scaleAspectFit) {
+    private func download(from url: URL, contentMode mode: ContentMode = .scaleAspectFit) {
         contentMode = mode
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             if let error = error {
@@ -51,6 +51,6 @@ extension UIImageView {
             self.image = UIImage(named: "no_image_avil")
             return
         }
-        downloaded(from: url, contentMode: mode)
+        download(from: url, contentMode: mode)
     }
 }

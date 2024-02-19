@@ -7,29 +7,34 @@
 
 import UIKit
 
-protocol PersonalInfoViewCoordinatorProtocol: AnyObject {
+//MARK: - PersonalInfoViewCoordinatorProtocol
+protocol PersonalInfoViewCoordinatorDelegate: AnyObject {
     
     /// Delocates the current coordinator.
-    func delocateCoordinator()
+    func dellocateCoordinator()
 }
 
-class PersonalInfoViewCoordinator: Coordinator, PersonalInfoViewCoordinatorProtocol {
+class PersonalInfoViewCoordinator: Coordinator, PersonalInfoViewCoordinatorDelegate {
     
+    //MARK: - Properties
     private var navController: UINavigationController
     
+    //MARK: - Initialization
     init(navController: UINavigationController) {
         self.navController = navController
     }
     
+    //MARK: - Override methods
     override func start() {
         guard let personalInfoVC = PersonalInfoViewController.initFromStoryBoard() else { return }
         
-        personalInfoVC.viewModel = PersonalInfoViewModel(coordinator: self, apiService: MovieDBService())
+        personalInfoVC.viewModel = PersonalInfoViewModel(personalInfoViewCoordinatorDelegate: self, apiService: MovieDBService())
         identifier = Constants.personalInfoCoordinatorID
         navController.pushViewController(personalInfoVC, animated: true)
     }
     
-    func delocateCoordinator() {
+    //MARK: - PersonalInfoViewCoordinatorProtocol
+    func dellocateCoordinator() {
         parentCoordinator?.removeChildCoordinator(self)
     }
     

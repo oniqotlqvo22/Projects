@@ -18,7 +18,7 @@ final class MainTabBarViewModelTests: XCTestCase {
         super.setUp()
         coordinatorMock = MockCoordinator(successType: .happy)
         coordinatorMock.parentCoordinator = coordinatorMock
-        viewModel = MainTabBarViewModel(coordinator: coordinatorMock)
+        viewModel = MainTabBarViewModel(tabBarCoordinatorDelegate: coordinatorMock)
     }
 
     override func tearDown() {

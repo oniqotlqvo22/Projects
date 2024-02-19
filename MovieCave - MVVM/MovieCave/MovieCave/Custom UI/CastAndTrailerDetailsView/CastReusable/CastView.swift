@@ -31,10 +31,10 @@ class CastView: UIView, CastViewProtocol {
     
     //MARK: - Private
     private func setUpView(widthAnchorConst: CGFloat) {
-        self.translatesAutoresizingMaskIntoConstraints = false
-        self.clipsToBounds = true
-        self.layer.masksToBounds = true
-        self.widthAnchor.constraint(equalToConstant: widthAnchorConst).isActive = true
+        translatesAutoresizingMaskIntoConstraints = false
+        clipsToBounds = true
+        layer.masksToBounds = true
+        widthAnchor.constraint(equalToConstant: widthAnchorConst).isActive = true
         addSubview(label)
         addSubview(imageView)
     }
@@ -44,20 +44,20 @@ class CastView: UIView, CastViewProtocol {
         imageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
-        imageView.layer.borderWidth = 2.0
+        imageView.heightAnchor.constraint(equalToConstant: Constants.castImageViewHeightAnchor).isActive = true
+        imageView.layer.borderWidth = Constants.imageViewLayerBorderWidth
         imageView.layer.borderColor = UIColor.white.cgColor
         imageView.downloaded(from: Constants.moviePosterURL + posterKey)
     }
     
     private func setUpLabel(for castName: String) {
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        label.heightAnchor.constraint(equalToConstant: Constants.labelHeightAnchor).isActive = true
         label.topAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
         label.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         label.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         label.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        label.numberOfLines = 0
+        label.numberOfLines = Constants.labelNumberOfLinesZero
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
         label.textColor = .white
@@ -67,9 +67,8 @@ class CastView: UIView, CastViewProtocol {
     //MARK: - Override Methods
     override func layoutSubviews() {
         super.layoutSubviews()
-        imageView.layer.cornerRadius = imageView.frame.size.width / 2
+        imageView.layer.cornerRadius = imageView.frame.size.width / Constants.cornerRadiusDevider
         imageView.clipsToBounds = true
-        imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.opaqueSeparator.cgColor
     }
 }

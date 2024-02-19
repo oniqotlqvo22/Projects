@@ -23,13 +23,13 @@ protocol PersonalInfoViewModelProtocol {
 class PersonalInfoViewModel: PersonalInfoViewModelProtocol {
     
     //MARK: - Properties
-    private weak var coordinator: PersonalInfoViewCoordinatorProtocol?
+    private weak var personalInfoViewCoordinatorDelegate: PersonalInfoViewCoordinatorDelegate?
     private let apiService: MovieDBServiceProtocol
     var changeMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
     
     //MARK: - Initializer
-    init(coordinator: PersonalInfoViewCoordinatorProtocol?, apiService: MovieDBServiceProtocol) {
-        self.coordinator = coordinator
+    init(personalInfoViewCoordinatorDelegate: PersonalInfoViewCoordinatorDelegate?, apiService: MovieDBServiceProtocol) {
+        self.personalInfoViewCoordinatorDelegate = personalInfoViewCoordinatorDelegate
         self.apiService = apiService
     }
     
@@ -39,7 +39,7 @@ class PersonalInfoViewModel: PersonalInfoViewModelProtocol {
     }
     
     func removeCoordinator() {
-        coordinator?.delocateCoordinator()
+        personalInfoViewCoordinatorDelegate?.dellocateCoordinator()
     }
     
 }

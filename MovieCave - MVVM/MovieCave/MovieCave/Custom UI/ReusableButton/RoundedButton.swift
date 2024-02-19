@@ -13,14 +13,14 @@ class RoundedButton: UIButton {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        layer.cornerRadius = bounds.height / 2
+        layer.cornerRadius = bounds.height / Constants.roundedButtonCornerRadiusDevider
         
-        backgroundColor = UIColor(red: 0.8, green: 0.9, blue: 1.0, alpha: 1.0)
+        backgroundColor = Constants.roundedButtonBackgroundColor
         
         layer.shadowColor = UIColor.darkGray.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = 4
-        layer.shadowOpacity = 0.5
+        layer.shadowOffset = Constants.roundedButtonLayerShadowOffset
+        layer.shadowRadius = Constants.roundedButtonLayerShadowRadius
+        layer.shadowOpacity = Constants.roundedButtonLayerShadowOpacity
         
         addTarget(self, action: #selector(buttonPressed), for: .touchDown)
         addTarget(self, action: #selector(buttonReleased), for: .touchUpInside)
@@ -34,7 +34,7 @@ class RoundedButton: UIButton {
     }
     
     @objc private func buttonReleased() {
-        backgroundColor = UIColor(red: 0.8, green: 0.9, blue: 1.0, alpha: 1.0)
+        backgroundColor = Constants.roundedButtonBackgroundColor
     }
 }
 

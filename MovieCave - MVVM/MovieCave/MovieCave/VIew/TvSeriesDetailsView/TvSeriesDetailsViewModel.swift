@@ -23,12 +23,12 @@ class TvSeriesDetailsViewModel: TvSeriesDetailsProtocol {
     var mediaCast: CurrentValueSubject<[MediaCast]?, Never> = CurrentValueSubject(nil)
     var mediaDetails: CurrentValueSubject<MediaDetails?, Never> = CurrentValueSubject(nil)
     var popUpMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
-    weak var coordinator: TVSeriesDetailsCoordinator?
+    weak var tvSeriesDetailsCoordinatorDelegate: TVSeriesDetailsCoordinator?
     private var apiService: MovieDBServiceProtocol
     
     //MARK: - Initializer
-    init(mediaID: Int, coordinator: TVSeriesDetailsCoordinator, apiService: MovieDBServiceProtocol, with type: MediaType) {
-        self.coordinator = coordinator
+    init(mediaID: Int, tvSeriesDetailsCoordinatorDelegate: TVSeriesDetailsCoordinator, apiService: MovieDBServiceProtocol, with type: MediaType) {
+        self.tvSeriesDetailsCoordinatorDelegate = tvSeriesDetailsCoordinatorDelegate
         self.apiService = apiService
         tvSeriesDetails(mediaId: mediaID, with: type)
     }
@@ -66,7 +66,7 @@ class TvSeriesDetailsViewModel: TvSeriesDetailsProtocol {
             
             switch result {
             case .success(let videos):
-                var trailers = [MediaVideos]()
+                var trailers: [MediaVideos] = []
                 videos.results.forEach { trailer in
                     guard trailer.type == Constants.trailerKeyWord else { return }
                     let video = MediaVideos(key: trailer.key, name: trailer.name)
@@ -85,7 +85,7 @@ class TvSeriesDetailsViewModel: TvSeriesDetailsProtocol {
             
             switch result {
             case .success(let cast):
-                var castArray = [MediaCast]()
+                var castArray: [MediaCast] = []
                 cast.cast.forEach {
                     let cast = MediaCast(name: $0.name, poster: $0.profilePath)
                     castArray.append(cast)

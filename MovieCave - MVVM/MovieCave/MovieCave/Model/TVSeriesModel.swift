@@ -9,6 +9,7 @@ import Foundation
 
 struct TVSeriesData: Codable {
     var page: Int
+    var totalPages: Int
     var results: [TVSeriesResults]
 }
 

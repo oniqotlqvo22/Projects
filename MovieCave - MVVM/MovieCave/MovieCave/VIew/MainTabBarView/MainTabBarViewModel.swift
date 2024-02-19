@@ -17,15 +17,16 @@ protocol MainTabBarViewModelProtocol {
 class MainTabBarViewModel: MainTabBarViewModelProtocol {
     
     //MARK: - Properties
-    weak var coordinator: TabBarCoordinatorDelegate?
+    weak var tabBarCoordinatorDelegate: TabBarCoordinatorDelegate?
     
     //MARK: - Initializer
-    init(coordinator: TabBarCoordinatorDelegate) {
-        self.coordinator = coordinator
+    init(tabBarCoordinatorDelegate: TabBarCoordinatorDelegate) {
+        self.tabBarCoordinatorDelegate = tabBarCoordinatorDelegate
     }
     
+    //MARK: - MainTabBarViewModelProtocol
     func tabBarItemPressed(tabBar: String) {
-        coordinator?.tabBarItemClicked(itemName: tabBar)
+        tabBarCoordinatorDelegate?.tabBarItemClicked(itemName: tabBar)
     }
     
 }

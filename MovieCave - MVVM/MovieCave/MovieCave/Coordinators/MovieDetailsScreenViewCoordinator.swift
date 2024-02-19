@@ -20,7 +20,10 @@ class MovieDetailsViewCoordinator: Coordinator {
     override func start() {
         guard let movieDetailsVC = MoviesDetailsViewController.initFromStoryBoard() else { return }
 
-        movieDetailsVC.viewModel = MoviesDetailsViewModel(mediaID: movieID, coordinator: self, apiService: MovieDBService(), with: .movies)
+        movieDetailsVC.viewModel = MoviesDetailsViewModel(mediaID: movieID,
+                                                          movieDetailsViewCoordinatorDelegate: self,
+                                                          apiService: MovieDBService(),
+                                                          with: .movies)
         identifier = Constants.movieDetailsCoordinatorID
         navController.pushViewController(movieDetailsVC, animated: true)
     }

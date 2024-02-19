@@ -28,9 +28,11 @@ class TVSeriesViewCoordinator: Coordinator, TVSeriesViewCoordinatorDelegate {
     //MARK: - Override methods
     override func start() {
         guard let tvSeriesVC = TVSeriesViewController.initFromStoryBoard() else { return }
-
         
-        tvSeriesVC.viewModel = TVSeriesViewModel(coordinator: self, movieDBService: MovieDBService(), currentPage: 1, list: .topRated)
+        tvSeriesVC.viewModel = TVSeriesViewModel(tvSeriesViewCoordinatorDelegate: self,
+                                                 movieDBService: MovieDBService(),
+                                                 currentPage: Constants.firstPage,
+                                                 list: .topRated)
         identifier = Constants.tvSeriesViewCoordinatorID
         navController.navigationBar.prefersLargeTitles = false
         navController.pushViewController(tvSeriesVC, animated: true)

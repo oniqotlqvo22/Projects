@@ -15,7 +15,7 @@ protocol MoviesViewCoordinatorDelegate: AnyObject {
     func loadMoviesDetailsView(with movieID: Int)
     
     /// Removes the coordinator from coordinator  hierarchy.
-    func delocateCoordinator()
+    func dellocateCoordinator()
 }
 
 class MoviesViewCoordinator: Coordinator, MoviesViewCoordinatorDelegate {
@@ -34,12 +34,12 @@ class MoviesViewCoordinator: Coordinator, MoviesViewCoordinatorDelegate {
     override func start() {
         guard let moviesVC = MoviesViewController.initFromStoryBoard() else { return }
 
-        moviesVC.viewModel = MoviesViewModel(coordinator: self,
+        moviesVC.viewModel = MoviesViewModel(moviesViewCoordinatorDelegate: self,
                                              movieDBService: MovieDBService(),
                                              dataSource: CollectionViewDataSource(items: []),
                                              with: list,
                                              with: .topRated,
-                                             currentPage: 1)
+                                             currentPage: Constants.firstPage)
         identifier = Constants.moviesViewCoordinatorID
         navController.navigationBar.prefersLargeTitles = false
         navController.pushViewController(moviesVC, animated: true)
@@ -52,7 +52,7 @@ class MoviesViewCoordinator: Coordinator, MoviesViewCoordinatorDelegate {
         moviesCoordinator.start()
     }
     
-    func delocateCoordinator() {
+    func dellocateCoordinator() {
         parentCoordinator?.removeChildCoordinator(self)
     }
 }

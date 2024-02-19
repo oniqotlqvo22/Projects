@@ -11,8 +11,8 @@ import XCTest
 final class MoviesViewModelTests: XCTestCase {
 
     var mockMovieDBService: MovieDBManagerMock!
-    var coordinator: MoviesViewCoordinator!
-    var viewModel: MoviesViewModel!
+    var mockCoordinator: MockCoordinator!
+    var viewModel: MoviesViewModelProtocol!
     var currentPage = 1
     var genreList: MovieGenreLists = .topRated
     var list: MoviesList!
@@ -20,24 +20,81 @@ final class MoviesViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockMovieDBService = MovieDBManagerMock(succesCase: .sad, moviesList: .allMovies)
-        coordinator = MoviesViewCoordinator(navController: UINavigationController(), with: mockMovieDBService.moviesList)
-        viewModel = MoviesViewModel(coordinator: coordinator,
+        mockCoordinator = MockCoordinator(successType: .happy)
+        viewModel = MoviesViewModel(moviesViewCoordinatorDelegate: mockCoordinator,
                                     movieDBService: mockMovieDBService,
-                                    with: mockMovieDBService.moviesList,
-                                    with: genreList)
+                                    dataSource: CollectionViewDataSource(items: []),
+                                    with: .allMovies,
+                                    with: .popular,
+                                    currentPage: 1)
     }
 
     override func tearDown() {
         super.tearDown()
         mockMovieDBService = nil
-        coordinator = nil
+        mockCoordinator = nil
         viewModel = nil
+    }
+    
+    func test_favoriteButtonClicked_HappyCase_withFavorite() {
+        // Given
+        mockMovieDBService.succesCase = .happy
+        viewModel.dataSource.items = [MoviesModel(movieResults: MovieResults(id: 10,
+                                                                             originalTitle: "TITLE",
+                                                                             overview: "OVERVIEW",
+                                                                             genreIds: [1]),
+                                                                             isFavorite: true)]
+        
+        // When
+        viewModel.buttonClicked(index: 0)
+        
+        // Then
+        
+        XCTAssertEqual(10, mockMovieDBService.apiCallMoviesResult?.movieResults.id)
+    }
+    
+    func test_favoriteButtonClicked_HappyCase_withNotFavorite() {
+        // Given
+        mockMovieDBService.succesCase = .happy
+        viewModel.dataSource.items = [MoviesModel(movieResults: MovieResults(id: 10,
+                                                                             originalTitle: "TITLE",
+                                                                             overview: "OVERVIEW",
+                                                                             genreIds: [1]),
+                                                                             isFavorite: false)]
+        
+        // When
+        viewModel.buttonClicked(index: 0)
+        
+        // Then
+        
+        XCTAssertEqual(10, mockMovieDBService.apiCallMoviesResult?.movieResults.id)
+    }
+    
+    func test_favoriteButtonClicked_SadCase() {
+        // Given
+        viewModel.dataSource.items = [MoviesModel(movieResults: MovieResults(id: 10,
+                                                                             originalTitle: "TITLE",
+                                                                             overview: "OVERVIEW",
+                                                                             genreIds: [1]),
+                                                                             isFavorite: false)]
+        
+        // When
+        viewModel.buttonClicked(index: 0)
+        
+        // Then
+        
+        XCTAssertNil(mockMovieDBService.apiCallMoviesResult?.movieResults.id)
     }
     
     func test_sendMovieDetails_HappyCase() {
         // Given
         mockMovieDBService.succesCase = .happy
-        viewModel = MoviesViewModel(coordinator: coordinator, movieDBService: mockMovieDBService, with: .allMovies, with: genreList)
+        viewModel = MoviesViewModel(moviesViewCoordinatorDelegate: mockCoordinator,
+                                    movieDBService: mockMovieDBService,
+                                    dataSource: CollectionViewDataSource(items: []),
+                                    with: .allMovies,
+                                    with: genreList,
+                                    currentPage: 1)
         
         // When
         viewModel.sendMovieDetails(with: 10)
@@ -45,10 +102,13 @@ final class MoviesViewModelTests: XCTestCase {
         // Then
         XCTAssertEqual(10, mockMovieDBService.apiCallMoviesResult?.movieResults.id)
         XCTAssertNotNil(mockMovieDBService.apiCallMoviesResult?.movieResults)
+        XCTAssertEqual(10, mockCoordinator.mediaID)
+        XCTAssertNotNil(mockCoordinator.mediaID)
     }
     
     func test_sendMoviesDetails_SadCase() {
         // Given
+        mockCoordinator.successType = .sad
         
         // When
         viewModel.sendMovieDetails(with: 10)
@@ -56,15 +116,30 @@ final class MoviesViewModelTests: XCTestCase {
         // Then
         XCTAssertNil(mockMovieDBService.apiCallMoviesResult?.movieResults)
         XCTAssertNotNil(mockMovieDBService.apiCallError)
+        XCTAssertNotEqual(10, mockCoordinator.mediaID)
+        XCTAssertNil(mockCoordinator.mediaID)
     }
     
-    func test_favoriteMovieListOperations_HappyCase() {
+    func test_favoriteMovieListOperations_HappyCase_withAddFavorite() {
         // Given
         let expectedTItle = "key"
         mockMovieDBService.succesCase = .happy
         
         // When
         viewModel.favoriteMovieListOperations(with: 10, for: .addToFavorites)
+        
+        // Then
+        XCTAssertEqual(mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle, expectedTItle)
+        XCTAssertNotNil(mockMovieDBService.apiCallMoviesResult?.movieResults)
+    }
+    
+    func test_favoriteMovieListOperations_HappyCase_withRemoveFavorite() {
+        // Given
+        let expectedTItle = "key"
+        mockMovieDBService.succesCase = .happy
+        
+        // When
+        viewModel.favoriteMovieListOperations(with: 10, for: .removeFromFavorites)
         
         // Then
         XCTAssertEqual(mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle, expectedTItle)
@@ -81,9 +156,16 @@ final class MoviesViewModelTests: XCTestCase {
         XCTAssertNil(mockMovieDBService.apiCallMoviesResult?.movieResults)
     }
 
-    func test_filterSeries_HappyCase() {
+    func test_filterMovies_HappyCase() {
         // Given
-        mockMovieDBService.succesCase = .happy
+        mockMovieDBService = MovieDBManagerMock(succesCase: .happy, moviesList: .allMovies)
+        viewModel = MoviesViewModel(moviesViewCoordinatorDelegate: mockCoordinator,
+                                    movieDBService: mockMovieDBService,
+                                    dataSource: CollectionViewDataSource(items: []),
+                                    with: .allMovies,
+                                    with: genreList,
+                                    currentPage: 1)
+        
         let filter = [Constants.mostPopularFilterButton,
                       Constants.upComingFilterButton,
                       Constants.ratingFilterButton,
@@ -95,10 +177,11 @@ final class MoviesViewModelTests: XCTestCase {
         // Then
         XCTAssertEqual(filter.last, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
-        XCTAssertNotNil(viewModel.movies.value)
+        XCTAssertNil(mockMovieDBService.apiCallError)
+        XCTAssertNil(viewModel.popUpMessage.value)
     }
 
-    func test_filterSeries_SadCase() {
+    func test_filterMovies_SadCase() {
         // Given
         let filter = "Sad case"
         
@@ -109,101 +192,56 @@ final class MoviesViewModelTests: XCTestCase {
         XCTAssertNotEqual(filter, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
         XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)
+        XCTAssertNotNil(mockMovieDBService.apiCallError)
+        XCTAssertNotNil(viewModel.popUpMessage.value)
     }
 
-    func test_restoreListAfterSearch_HappyCase() {
-        // Given
-        
-        // When
-        viewModel.restoreListAfterSearch()
-        
-        // Then
-        XCTAssertEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertEqual(viewModel.movies.value?.last?.movieResults.originalTitle, mockMovieDBService.apiCallTVSeriesResult?.results.last?.name)
-    }
-    
-    func test_restoreListAfterSearch_SadCase() {
-        // Given
-        currentPage = 2
-        
-        // When
-        viewModel.restoreListAfterSearch()
-        
-        // Then
-        XCTAssertNotEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)
-    }
-    
-    func test_ChangePage_HappyCase() {
-        // Given
-        let nextPage = true
-        let expectedPage = 2
-
-        // When
-        viewModel.changePage(nextPage: nextPage)
-        
-        // Then
-        XCTAssertNotEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertEqual(expectedPage, mockMovieDBService.operateWithAPIPage)
-    }
-    
-    func test_ChangePage_SadCase() {
-        // Given
-        let nextPage = false
-        let expectedPage = 2
-
-        // When
-        viewModel.changePage(nextPage: nextPage)
-        
-        // Then
-        XCTAssertEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotEqual(expectedPage, mockMovieDBService.operateWithAPIPage)
-    }
-    
-    func test_searchTVSeries_favorites_HappyCase() {
+    func test_performSearch_favorites_HappyCase() {
         // Given
         mockMovieDBService.succesCase = .happy
         mockMovieDBService.moviesList = .favorites
-        viewModel = MoviesViewModel(coordinator: coordinator, movieDBService: mockMovieDBService, with: .favorites, with: .topRated)
+        viewModel = MoviesViewModel(moviesViewCoordinatorDelegate: mockCoordinator,
+                                    movieDBService: mockMovieDBService,
+                                    dataSource: CollectionViewDataSource(items: []),
+                                    with: .favorites,
+                                    with: genreList,
+                                    currentPage: 1)
         let searchText = "Happy case"
         
         // When
-        viewModel.searchMovies(searchText)
+        viewModel.performSearch(with: searchText)
         
         // Then
-        XCTAssertEqual(viewModel.movies.value?.last?.movieResults.originalTitle, mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle)
+        XCTAssertEqual(viewModel.dataSource.items.last?.movieResults.originalTitle, mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle)
         XCTAssertNotNil(mockMovieDBService.apiCallMoviesResult)
         XCTAssertEqual(searchText, mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle)
         XCTAssertEqual(searchText, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
     }
     
-    func test_searchTVSeries_allMovies_HappyCase() {
+    func test_performSearch_allMovies_HappyCase() {
         // Given
         mockMovieDBService.succesCase = .happy
         let searchText = "Happy case"
         
         // When
-        viewModel.searchMovies(searchText)
+        viewModel.performSearch(with: searchText)
         
         // Then
-        XCTAssertEqual(viewModel.movies.value?.last?.movieResults.originalTitle, mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle)
+        XCTAssertEqual(viewModel.dataSource.items.last?.movieResults.originalTitle, mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle)
         XCTAssertNotNil(mockMovieDBService.apiCallMoviesResult)
         XCTAssertEqual(searchText, mockMovieDBService.apiCallMoviesResult?.movieResults.originalTitle)
         XCTAssertEqual(searchText, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
     }
     
-    func test_searchTVSeries_SadCase() {
+    func test_performSearch_SadCase() {
         // Given
-        let searchText = "Sad case"
+        
+        let searchText = ""
         
         // When
-        viewModel.searchMovies(searchText)
+        viewModel.performSearch(with: searchText)
         
         // Then
         XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)

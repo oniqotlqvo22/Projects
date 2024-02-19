@@ -17,7 +17,7 @@ class TVSeriesViewController: UIViewController, SpinnerProtocol {
     var viewModel: TVSeriesViewModelProtocol?
     var spinnerView: UIView?
     private var popUp: PopUpView!
-    private var cancellables = [AnyCancellable]()
+    private var cancellables: [AnyCancellable] = []
 
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {

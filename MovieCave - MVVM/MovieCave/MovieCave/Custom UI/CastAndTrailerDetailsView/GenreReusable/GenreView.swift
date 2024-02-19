@@ -9,6 +9,7 @@ import UIKit
 
 class GenreView: UIView {
     
+    //MARK: - Properties
     private let label: UILabel
     
     var text: String? {
@@ -21,6 +22,7 @@ class GenreView: UIView {
         }
     }
     
+    //MARK: - Initialization
     init(text: String?) {
         label = UILabel(frame: CGRect.zero)
         super.init(frame: CGRect.zero)
@@ -36,6 +38,13 @@ class GenreView: UIView {
         commonInit()
     }
     
+    //MARK: - Lifecycle
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        label.frame = bounds
+    }
+    
+    //MARK: - Private methods
     private func commonInit() {
         addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -50,23 +59,19 @@ class GenreView: UIView {
     }
 
     private func configureLabel() {
-        label.textColor = UIColor(red: 0.98, green: 0.85, blue: 0.12, alpha: 1)
-        label.layer.cornerRadius = bounds.height / 2
+        label.textColor = Constants.genreLabelColor
+        label.layer.cornerRadius = bounds.height / Constants.cornerRadiusDevider
         label.textAlignment = .center
-        label.numberOfLines = 1
+        label.numberOfLines = Constants.numberOfLinesOne
         label.layer.shadowColor = UIColor.red.cgColor
-        label.layer.shadowOffset = CGSize(width: 0, height: 4)
-        label.layer.shadowOpacity = 0.6
-        label.layer.shadowRadius = 4
+        label.layer.shadowOffset = Constants.genreViewLabelShadowOffset
+        label.layer.shadowOpacity = Constants.genreViewLabelShadowOpacity
+        label.layer.shadowRadius = Constants.genreViewLabelShadowRadius
     }
     
     private func updateViewSize() {
         let labelSize = label.intrinsicContentSize
-        frame.size = CGSize(width: labelSize.width + 10, height: 25)
+        frame.size = CGSize(width: labelSize.width + Constants.gerneViewFrameAdditionalWidth, height: Constants.gerneViewFrameHeight)
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        label.frame = bounds
-    }
+
 }

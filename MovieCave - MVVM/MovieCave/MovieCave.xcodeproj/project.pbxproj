@@ -35,7 +35,8 @@
 		84526B2D2AEC5B630014B405 /* PopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84526B2C2AEC5B630014B405 /* PopUpView.swift */; };
 		84526B2F2AEC5B6D0014B405 /* PopUpView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84526B2E2AEC5B6D0014B405 /* PopUpView.xib */; };
 		8452EC972B6113CC00248DBA /* UITextField+Combine+Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8452EC962B6113CC00248DBA /* UITextField+Combine+Publisher.swift */; };
-		845D5E222B19DF6500236356 /* DetailsScreenViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D5E212B19DF6500236356 /* DetailsScreenViewModelTests.swift */; };
+		8452EC9A2B6BD67600248DBA /* TvSeriesDetailsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8452EC992B6BD67600248DBA /* TvSeriesDetailsViewModelTests.swift */; };
+		845D5E222B19DF6500236356 /* MovieDetailsScreenViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D5E212B19DF6500236356 /* MovieDetailsScreenViewModelTests.swift */; };
 		845D5E262B1E466100236356 /* MockCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D5E252B1E466100236356 /* MockCoordinator.swift */; };
 		845D5E282B20726900236356 /* ProfileViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D5E272B20726900236356 /* ProfileViewModelTests.swift */; };
 		845D5E2A2B23D44F00236356 /* MainTabBarViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845D5E292B23D44F00236356 /* MainTabBarViewModelTests.swift */; };
@@ -123,7 +124,8 @@
 		84526B2C2AEC5B630014B405 /* PopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpView.swift; sourceTree = "<group>"; };
 		84526B2E2AEC5B6D0014B405 /* PopUpView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PopUpView.xib; sourceTree = "<group>"; };
 		8452EC962B6113CC00248DBA /* UITextField+Combine+Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Combine+Publisher.swift"; sourceTree = "<group>"; };
-		845D5E212B19DF6500236356 /* DetailsScreenViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsScreenViewModelTests.swift; sourceTree = "<group>"; };
+		8452EC992B6BD67600248DBA /* TvSeriesDetailsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TvSeriesDetailsViewModelTests.swift; sourceTree = "<group>"; };
+		845D5E212B19DF6500236356 /* MovieDetailsScreenViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsScreenViewModelTests.swift; sourceTree = "<group>"; };
 		845D5E252B1E466100236356 /* MockCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoordinator.swift; sourceTree = "<group>"; };
 		845D5E272B20726900236356 /* ProfileViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModelTests.swift; sourceTree = "<group>"; };
 		845D5E292B23D44F00236356 /* MainTabBarViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarViewModelTests.swift; sourceTree = "<group>"; };
@@ -239,11 +241,12 @@
 				845D5E252B1E466100236356 /* MockCoordinator.swift */,
 				84395DAC2B0639FC006E86AA /* TVSeriesViewModelTests.swift */,
 				84395DAE2B0EAB14006E86AA /* MoviesViewModelTests.swift */,
-				845D5E212B19DF6500236356 /* DetailsScreenViewModelTests.swift */,
+				845D5E212B19DF6500236356 /* MovieDetailsScreenViewModelTests.swift */,
 				845D5E272B20726900236356 /* ProfileViewModelTests.swift */,
 				845D5E292B23D44F00236356 /* MainTabBarViewModelTests.swift */,
 				845D5E2B2B23D5B700236356 /* LoginViewModelTests.swift */,
 				845D5E2D2B286A2000236356 /* PersonalInfoViewModelTests.swift */,
+				8452EC992B6BD67600248DBA /* TvSeriesDetailsViewModelTests.swift */,
 			);
 			path = MovieCaveTests;
 			sourceTree = "<group>";
@@ -668,6 +671,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8452EC9A2B6BD67600248DBA /* TvSeriesDetailsViewModelTests.swift in Sources */,
 				84395DAD2B0639FC006E86AA /* TVSeriesViewModelTests.swift in Sources */,
 				84395DAF2B0EAB14006E86AA /* MoviesViewModelTests.swift in Sources */,
 				845D5E262B1E466100236356 /* MockCoordinator.swift in Sources */,
@@ -676,7 +680,7 @@
 				845D5E2C2B23D5B700236356 /* LoginViewModelTests.swift in Sources */,
 				84EFB9A12B0631D70046B897 /* MovieDBManagerMock.swift in Sources */,
 				845D5E2A2B23D44F00236356 /* MainTabBarViewModelTests.swift in Sources */,
-				845D5E222B19DF6500236356 /* DetailsScreenViewModelTests.swift in Sources */,
+				845D5E222B19DF6500236356 /* MovieDetailsScreenViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -838,6 +842,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -865,6 +870,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

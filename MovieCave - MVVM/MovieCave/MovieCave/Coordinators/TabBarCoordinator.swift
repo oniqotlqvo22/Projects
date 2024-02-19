@@ -19,7 +19,9 @@ class TabBarCoordinator: Coordinator, TabBarCoordinatorDelegate {
     //MARK: - Properties
     private var rootNavController: UINavigationController
     private let pages: [TabBarPage] = [.movies, .tvSeries, .profile]
-        .sorted(by: { $0.pageOrderNumber() < $1.pageOrderNumber() })
+        .sorted(by: {
+            $0.pageOrderNumber() < $1.pageOrderNumber()
+        })
     
     //MARK: - Initializer
     init(rootNavController: UINavigationController) {
@@ -32,13 +34,15 @@ class TabBarCoordinator: Coordinator, TabBarCoordinatorDelegate {
 
         prepareTabBarController(withTabControllers: controllers)
         identifier = Constants.tabBarCoordinatorID
-        parentCoordinator?.childCoordinators.removeAll {$0.identifier == Constants.loginCoordinatorID}
+        parentCoordinator?.childCoordinators.removeAll {
+            $0.identifier == Constants.loginCoordinatorID
+        }
     }
     
     private func prepareTabBarController(withTabControllers tabControllers: [UIViewController]) {
         guard let tabBarController = MainTabBarController.initFromStoryBoard() else { return }
 
-        tabBarController.viewModel = MainTabBarViewModel(coordinator: self)
+        tabBarController.viewModel = MainTabBarViewModel(tabBarCoordinatorDelegate: self)
         tabBarController.setViewControllers(tabControllers, animated: true)
         tabBarController.selectedIndex = TabBarPage.movies.pageOrderNumber()
 
@@ -73,7 +77,6 @@ class TabBarCoordinator: Coordinator, TabBarCoordinatorDelegate {
     func tabBarItemClicked(itemName: String) {
         guard let tabBar: TabBarPage = pages.first(where: {$0.pageTitleValue() == itemName}) else { return }
 
-        print(tabBar)
     }
 
 }

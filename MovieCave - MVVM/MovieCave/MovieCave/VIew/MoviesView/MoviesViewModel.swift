@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 //MARK: - MoviesViewModelProtocol
-protocol MoviesViewModelProtocol {
+protocol MoviesViewModelProtocol: FavoriteButtonDelegate {
     /// Performs favorite movie list operations for the specified movie ID and operation.
     /// - Parameters:
     ///   - movieID: The ID of the movie for the favorite list operation.
@@ -32,7 +32,7 @@ protocol MoviesViewModelProtocol {
     var fetchingDataSuccession: CurrentValueSubject<Bool, Never> { get }
     
     /// The coordinator responsible for handling movie view navigation.
-    var coordinator: MoviesViewCoordinatorDelegate? { get }
+    var moviesViewCoordinatorDelegate: MoviesViewCoordinatorDelegate? { get }
     
     /// A subject that holds the pop-up message.
     var popUpMessage: CurrentValueSubject<String?, Never> { get }
@@ -44,35 +44,35 @@ protocol MoviesViewModelProtocol {
     var favoriteButtonIndex: CurrentValueSubject<Int?, Never> { get }
     
     /// The data source for the collection view.
-    var dataSource: CollectionViewDataSource<MoviesModel> { get }
+    var dataSource: CollectionViewDataSource<MovieModelResults> { get }
 }
 
-class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
+class MoviesViewModel: MoviesViewModelProtocol {
     
     //MARK: - Properties
-    weak var coordinator: MoviesViewCoordinatorDelegate?
+    weak var moviesViewCoordinatorDelegate: MoviesViewCoordinatorDelegate?
     private let movieDBService: MovieDBServiceProtocol
     private var list: MoviesList
     private var currentPage: Int
     private var genreList: MovieGenreLists
     private var currentSearchText: String = ""
-    private var moviesArray = [MoviesModel]()
+    private var moviesArray: [MovieModelResults] = []
     private var currentOperationType: APIOperations = .fetchMovies
     
-    var dataSource: CollectionViewDataSource<MoviesModel> = CollectionViewDataSource(items: [])
+    var dataSource: CollectionViewDataSource<MovieModelResults> = CollectionViewDataSource(items: [])
     var fetchingDataSuccession: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
     var popUpMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
     var resetPosition: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
     var favoriteButtonIndex: CurrentValueSubject<Int?, Never> = CurrentValueSubject(nil)
     
     //MARK: - Initializer
-    init(coordinator: MoviesViewCoordinatorDelegate,
+    init(moviesViewCoordinatorDelegate: MoviesViewCoordinatorDelegate,
          movieDBService: MovieDBServiceProtocol,
          dataSource: CollectionViewDataSource<MoviesModel>,
          with list: MoviesList,
          with genreList: MovieGenreLists,
          currentPage: Int) {
-        self.coordinator = coordinator
+        self.moviesViewCoordinatorDelegate = moviesViewCoordinatorDelegate
         self.movieDBService = movieDBService
         self.currentPage = currentPage
         self.genreList = genreList
@@ -102,6 +102,8 @@ class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
     }
 
     func filterMovies(_ filter: String) {
+        resetToFirstPage()
+        
         switch filter {
         case Constants.mostPopularFilterButton:
             genreList = .popular
@@ -121,11 +123,11 @@ class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
     }
 
     func favoriteMovieListOperations(with movieID: Int, for operation: Favorites) {
-        movieDBService.menageFavoritesMovies(with: movieID, for: operation)
+        movieDBService.manageFavoritesMovies(with: movieID, for: operation)
     }
     
     func sendMovieDetails(with movieID: Int) {
-        coordinator?.loadMoviesDetailsView(with: movieID)
+        moviesViewCoordinatorDelegate?.loadMoviesDetailsView(with: movieID)
     }
     
     //MARK: - Private
@@ -134,12 +136,12 @@ class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
             guard let self else { return }
             
             switch result {
-            case .success(let moviesArray):
-                guard !moviesArray.isEmpty else {
-                    self.fetchMovies(withFilter: withFilter, on: page - 1)
+            case .success(let moviesData):
+                guard moviesData.totalPages > page else {
+                    self.popUpMessage.send(Constants.noMorePages)
                     return }
                 
-                self.moviesArray.append(contentsOf: moviesArray)
+                self.moviesArray.append(contentsOf: moviesData.modelResults)
                 self.dataSource.items = self.moviesArray
                 self.fetchingDataSuccession.send(true)
             case .failure(let error):
@@ -153,12 +155,12 @@ class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
             guard let self else { return }
 
             switch result {
-            case .success(let moviesArray):
-                guard !moviesArray.isEmpty else {
-                    self.searchMovies(text, on: page - 1)
+            case .success(let moviesData):
+                guard moviesData.totalPages > page else {
+                    self.popUpMessage.send(Constants.noMorePages)
                     return }
                 
-                self.moviesArray.append(contentsOf: moviesArray)
+                self.moviesArray.append(contentsOf: moviesData.modelResults)
                 self.dataSource.items = self.moviesArray
                 self.fetchingDataSuccession.send(true)
             case .failure(let error):
@@ -168,10 +170,10 @@ class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
     }
     
     private func setUpData() {
-        dataSource.configureCell = { [weak self] cell, indexPath, item in
+        dataSource.configureCell = { [weak self] cell, indexPath, items in
             cell.delegate = self
             cell.movieIindex = indexPath.row
-            cell.setMovies(with: item)
+            cell.setMovies(with: items)
         }
         
         dataSource.didSelectItem = { [weak self] item in
@@ -184,7 +186,6 @@ class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
         
         dataSource.resetToFirstPageHandler = { [weak self] in
             self?.resetToFirstPage()
-            self?.resetPosition.send(true)
         }
     }
     
@@ -212,16 +213,7 @@ class MoviesViewModel: MoviesViewModelProtocol, FavoriteButtonDelegate{
     private func resetToFirstPage() {
         currentPage = 1
         moviesArray.removeAll()
-        
-        switch currentOperationType {
-        case .fetchMovies:
-            fetchMovies(withFilter: genreList, on: currentPage)
-        case .searchMovieByTitle:
-            searchMovies(currentSearchText, on: currentPage)
-        default:
-            break
-        }
+        resetPosition.send(true)
     }
-    
     
 }

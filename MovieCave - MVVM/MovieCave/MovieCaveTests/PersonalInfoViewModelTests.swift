@@ -19,7 +19,7 @@ final class PersonalInfoViewModelTests: XCTestCase {
         coordinatorMock = MockCoordinator(successType: .happy)
         coordinatorMock.parentCoordinator = coordinatorMock
         movieDBManagerMock = MovieDBManagerMock(succesCase: .happy, moviesList: .allMovies)
-        viewModel = PersonalInfoViewModel(coordinator: coordinatorMock, apiService: movieDBManagerMock)
+        viewModel = PersonalInfoViewModel(personalInfoViewCoordinatorDelegate: coordinatorMock, apiService: movieDBManagerMock)
     }
 
     override func tearDown() {

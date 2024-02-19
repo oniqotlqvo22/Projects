@@ -12,18 +12,51 @@ enum CoordinatorSuccessType {
     case happy
     case sad
 }
-class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordinatorDelegate, LoginCoordinatorDelegate, PersonalInfoViewCoordinatorProtocol {
+class MockCoordinator: Coordinator, ProfileViewCoordinatorDelegate, TabBarCoordinatorDelegate, LoginCoordinatorDelegate, PersonalInfoViewCoordinatorDelegate, TVSeriesViewCoordinatorDelegate, MoviesViewCoordinatorDelegate {
 
     let navController = UINavigationController()
     var successType: CoordinatorSuccessType
     var tabBarItemName: String?
+    var mediaID: Int?
     
     init(successType: CoordinatorSuccessType) {
         self.successType = successType
     }
     
+    //MARK: - MoviesViewCoordinatorDelegate
+    func loadMoviesDetailsView(with movieID: Int) {
+        switch successType {
+        case .happy:
+            let moviesDetailCoord = MovieDetailsViewCoordinator(navController: navController, movieID: movieID)
+            parentCoordinator?.addChildCoordinator(moviesDetailCoord)
+            identifier = "MovieDetails coordinator"
+            mediaID = movieID
+            moviesDetailCoord.start()
+        case .sad:
+            childCoordinators = []
+            identifier = nil
+            mediaID = nil
+        }
+    }
+    
+    //MARK: - TVSeriesViewCoordinatorDelegate
+    func loadSeriesDetailsView(with seriesID: Int) {
+        switch successType {
+        case .happy:
+            let tvSeriesDetailsCoord = TVSeriesDetailsCoordinator(navController: navController, seriesID: seriesID)
+            parentCoordinator?.addChildCoordinator(tvSeriesDetailsCoord)
+            identifier = "TVSeriesDetails coordinator"
+            mediaID = seriesID
+            tvSeriesDetailsCoord.start()
+        case .sad:
+            childCoordinators = []
+            identifier = nil
+            mediaID = nil
+        }
+    }
+    
     //MARK: - PersonalInfoViewCoordinatorProtocol
-    func delocateCoordinator() {
+    func dellocateCoordinator() {
         switch successType {
         case .happy:
             childCoordinators = []

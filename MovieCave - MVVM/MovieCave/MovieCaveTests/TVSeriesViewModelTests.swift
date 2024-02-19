@@ -9,73 +9,80 @@ import XCTest
 //import Combine
 @testable import MovieCave
 
-final class MovieCaveTests: XCTestCase {
+final class TVSeriesViewModelTests: XCTestCase {
 
     var mockMovieDBService: MovieDBManagerMock!
-    var viewModel: TVSeriesViewModel!
+    var viewModel: TVSeriesViewModelProtocol!
+    var coordinator: MockCoordinator!
     var currentPage = 1
     
     override func setUp() {
         super.setUp()
-        mockMovieDBService = MovieDBManagerMock(succesCase: .happy, moviesList: .allMovies)
-        viewModel = TVSeriesViewModel(coordinator: TVSeriesViewCoordinator(navController: UINavigationController()), movieDBService: mockMovieDBService, currentPage: currentPage, list: .popular)
+        mockMovieDBService = MovieDBManagerMock(succesCase: .sad, moviesList: .allMovies)
+        coordinator = MockCoordinator(successType: .happy)
+        viewModel = TVSeriesViewModel(tvSeriesViewCoordinatorDelegate: coordinator, movieDBService: mockMovieDBService, currentPage: currentPage, list: .popular)
     }
 
     override func tearDown() {
         super.tearDown()
         mockMovieDBService = nil
+        coordinator = nil
         viewModel = nil
     }
     
     func test_sendSeriesDetails_HappyCase() {
         // Given
         let id = 10
+        mockMovieDBService.succesCase = .happy
+        viewModel = TVSeriesViewModel(tvSeriesViewCoordinatorDelegate: coordinator, movieDBService: mockMovieDBService, currentPage: currentPage, list: .popular)
         
         // When
         viewModel.sendSeriesDetails(with: id)
         
         // Then
-        XCTAssertEqual(id, mockMovieDBService.apiCallTVSeriesResult?.results[0].id)
-        XCTAssertNotNil(mockMovieDBService.apiCallTVSeriesResult?.results[0].id)
-        XCTAssertEqual(viewModel.series.value?.last?.id, id)
+        XCTAssertEqual(10, mockMovieDBService.apiCallTVSeriesResult?.results[0].id)
+        XCTAssertNotNil(mockMovieDBService.apiCallTVSeriesResult?.results)
+        XCTAssertEqual(10, coordinator.mediaID)
+        XCTAssertNotNil(coordinator.mediaID)
     }
     
     func test_sendSeriesDetails_SadCase() {
         // Given
         let id = 12
-        mockMovieDBService.succesCase = .sad
+        coordinator.successType = .sad
         
         // When
         viewModel.sendSeriesDetails(with: id)
         
         // Then
-        XCTAssertNotEqual(id, mockMovieDBService.apiCallTVSeriesResult?.results[0].id)
-        XCTAssertNotNil(mockMovieDBService.apiCallTVSeriesResult?.results[0].id)
-        XCTAssertNotEqual(viewModel.series.value?.last?.id, id)
+        XCTAssertNil(mockMovieDBService.apiCallTVSeriesResult?.results)
+        XCTAssertNotNil(mockMovieDBService.apiCallError)
+        XCTAssertNotEqual(10, coordinator.mediaID)
+        XCTAssertNil(coordinator.mediaID)
     }
     
-    func test_searchTVSeries_HappyCase() {
+    func test_performSearch_HappyCase() {
         // Given
+        mockMovieDBService.succesCase = .happy
         let searchText = "Happy case"
         
         // When
-        viewModel.searchTVSeries(with: searchText)
+        viewModel.performSearch(with: searchText)
         
         // Then
-        XCTAssertEqual(viewModel.series.value?.last?.name, mockMovieDBService.apiCallTVSeriesResult?.results.last?.name)
-        XCTAssertNotNil(mockMovieDBService.apiCallTVSeriesResult)
+        XCTAssertEqual(viewModel.dataSource.items.last?.name, mockMovieDBService.apiCallTVSeriesResult?.results.last?.name)
+        XCTAssertNotNil(mockMovieDBService.apiCallTVSeriesResult?.results)
         XCTAssertEqual(searchText, mockMovieDBService.apiCallTVSeriesResult?.results[0].name)
         XCTAssertEqual(searchText, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
     }
     
-    func test_searchTVSeries_SadCase() {
+    func test_performSearch_SadCase() {
         // Given
-        mockMovieDBService.succesCase = .sad
-        let searchText = "Sad case"
+        let searchText = ""
         
         // When
-        viewModel.searchTVSeries(with: searchText)
+        viewModel.performSearch(with: searchText)
         
         // Then
         XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)
@@ -86,6 +93,8 @@ final class MovieCaveTests: XCTestCase {
     
     func test_filterSeries_HappyCase() {
         // Given
+        mockMovieDBService = MovieDBManagerMock(succesCase: .happy, moviesList: .allMovies)
+        viewModel = TVSeriesViewModel(tvSeriesViewCoordinatorDelegate: coordinator, movieDBService: mockMovieDBService, currentPage: currentPage, list: .popular)
         let filter = [Constants.popularTVSeriesFilterButton,
                       Constants.airingTodayTVSeriesFilterButton,
                       Constants.onTheAirTVSeriesFilterButton,
@@ -97,7 +106,8 @@ final class MovieCaveTests: XCTestCase {
         // Then
         XCTAssertEqual(filter.last, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
-        XCTAssertNotNil(viewModel.series.value)
+        XCTAssertNil(mockMovieDBService.apiCallError)
+        XCTAssertNil(viewModel.popUpMessage.value)
     }
 
     func test_filterSeries_SadCase() {
@@ -111,60 +121,8 @@ final class MovieCaveTests: XCTestCase {
         XCTAssertNotEqual(filter, mockMovieDBService.operateWithAPIKey)
         XCTAssertNotNil(mockMovieDBService.operateWithAPIKey)
         XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)
+        XCTAssertNotNil(mockMovieDBService.apiCallError)
+        XCTAssertNotNil(viewModel.popUpMessage.value)
     }
-    
-    func test_restoreListAfterSearch_HappyCase() {
-        // Given
-        
-        // When
-        viewModel.resetToFirstPage()
-        
-        // Then
-        XCTAssertEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertEqual(viewModel.series.value?.last?.name, mockMovieDBService.apiCallTVSeriesResult?.results.last?.name)
-    }
-    
-    func test_restoreListAfterSearch_SadCase() {
-        // Given
-        currentPage = 2
-        
-        // When
-        viewModel.resetToFirstPage()
-        
-        // Then
-        XCTAssertNotEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertEqual(viewModel.popUpMessage.value, mockMovieDBService.apiCallError)
-    }
-    
-    func test_ChangePage_HappyCase() {
-        // Given
-        let nextPage = true
-        let expectedPage = 2
-
-        // When
-        viewModel.changePage(nextPage: nextPage)
-        
-        // Then
-        XCTAssertNotEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertEqual(expectedPage, mockMovieDBService.operateWithAPIPage)
-    }
-    
-    func test_ChangePage_SadCase() {
-        // Given
-        let nextPage = false
-        let expectedPage = 2
-
-        // When
-        viewModel.changePage(nextPage: nextPage)
-        
-        // Then
-        XCTAssertEqual(currentPage, mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotNil(mockMovieDBService.operateWithAPIPage)
-        XCTAssertNotEqual(expectedPage, mockMovieDBService.operateWithAPIPage)
-    }
-    
     
 }

@@ -33,7 +33,7 @@ class ProfileViewCoordinator: Coordinator, ProfileViewCoordinatorDelegate {
     override func start() {
         guard let profileVC = ProfileViewController.initFromStoryBoard() else { return }
 
-        profileVC.viewModel = ProfileViewModel(coordinator: self, userInfoMessage: "Hello User")
+        profileVC.viewModel = ProfileViewModel(coordinator: self, userInfoMessage: Constants.userWellcomeMessage)
         identifier = Constants.profileViewCoordinatorID
         navController.pushViewController(profileVC, animated: true)
     }
@@ -52,9 +52,9 @@ class ProfileViewCoordinator: Coordinator, ProfileViewCoordinatorDelegate {
     }
     
     func logOut() {
-        guard let paretn = firstParent(of: RootCoordinator.self) else { return }
+        guard let parent = firstParent(of: RootCoordinator.self) else { return }
 
-        paretn.loadLogInPage()
+        parent.loadLogInPage()
     }
     
 }

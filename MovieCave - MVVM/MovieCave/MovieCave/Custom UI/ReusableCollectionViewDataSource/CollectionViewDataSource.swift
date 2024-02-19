@@ -35,9 +35,9 @@ class CollectionViewDataSource<T>: NSObject, UICollectionViewDataSource, UIColle
             return UICollectionViewCell()
         }
         
-        let items = items[indexPath.item]
-        configureCell?(cell,indexPath, items)
-        
+        let item = items[indexPath.item]
+        configureCell?(cell,indexPath, item)
+    
         return cell
     }
     
@@ -49,21 +49,21 @@ class CollectionViewDataSource<T>: NSObject, UICollectionViewDataSource, UIColle
     
     // MARK: - UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = 8
-        let numberOfItemsPerRow: CGFloat = 2
-        let totalSpacing: CGFloat = (numberOfItemsPerRow - 1) * spacing
+        let spacing: CGFloat = Constants.collectionViewItemSpacing
+        let numberOfItemsPerRow: CGFloat = Constants.collectionViewNumberOfItemsPerRow
+        let totalSpacing: CGFloat = (numberOfItemsPerRow - Constants.collectionViewNumberOfItemsPerRowExtraction) * spacing
         let width = (collectionView.frame.width - totalSpacing) / numberOfItemsPerRow
-        let height = width * 1.5
+        let height = width * Constants.collectionViewHeighMultiplier
         
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 8
+        return Constants.collectionViewMinimumInteritemSpacing
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 8
+        return Constants.collectionViewminimumLineSpacing
     }
     
     // MARK: - UIScrollViewDelegate
@@ -74,7 +74,7 @@ class CollectionViewDataSource<T>: NSObject, UICollectionViewDataSource, UIColle
         
         if offsetY > contentHeight - height {
             changePageHandler?()
-        } else if offsetY * -1 > offsetY {
+        } else if offsetY * Constants.scrollViewDidEndDraggingNegative > offsetY {
             resetToFirstPageHandler?()
         }
     }

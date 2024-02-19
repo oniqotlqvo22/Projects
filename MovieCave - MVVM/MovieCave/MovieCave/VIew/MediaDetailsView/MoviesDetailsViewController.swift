@@ -22,7 +22,7 @@ class MoviesDetailsViewController: UIViewController {
     
     //MARK: - Properties
     var viewModel: MediaDetailsScreenViewModelProtocol?
-    private var cancellables = [AnyCancellable]()
+    private var cancellables: [AnyCancellable] = []
     private var popUp: PopUpView!
 
     //MARK: - LifeCycle
@@ -81,21 +81,21 @@ extension MoviesDetailsViewController: TrailerViewDelegate {
     }
 
     func setUpGenreLabels(with genres: [String]) {
-        let genreLabelsView = GenreLabelsView()
+        let genreLabelsView: GenreLabelsViewProtocol = GenreLabelsView()
         genreView.addSubview(genreLabelsView)
         genreLabelsView.frame = genreView.bounds
         genreLabelsView.setUpGenreLabels(with: genres)
     }
 
     func setUpCast(with castArray: [MediaCast]) {
-        let castView = PopulatedCastView()
+        let castView: PopulatedCastViewProtocol = PopulatedCastView()
         castStackView.addArrangedSubview(castView)
         castView.frame = castStackView.bounds
         castView.setUpCast(with: castArray)
     }
 
     func setUpTrailers(with trailers: [MediaVideos]) {
-        let trailersView = TrailerVideosView()
+        let trailersView: TrailerVideosViewProtocol = TrailerVideosView()
         trailerStackView.addArrangedSubview(trailersView)
         trailersView.frame = genreView.bounds
         trailersView.setUpTrailers(with: trailers, trailerViewDelegate: self)

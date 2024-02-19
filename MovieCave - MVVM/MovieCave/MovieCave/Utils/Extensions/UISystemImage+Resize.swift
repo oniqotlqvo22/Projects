@@ -16,15 +16,15 @@ extension UIImage {
     ///   - tintColor: The tint color to apply to the image.
     /// - Returns: The resized and tinted image.
     func resizeSystemImage(sizeChange: CGSize, tintColor: UIColor) -> UIImage {
-      UIGraphicsBeginImageContextWithOptions(sizeChange, false, 0)
-      tintColor.set() // set tint color
-      draw(in: CGRect(origin: .zero, size: sizeChange))
-      let resizedImage = UIGraphicsGetImageFromCurrentImageContext()!
-      UIGraphicsEndImageContext()
-      resizedImage.withRenderingMode(.alwaysTemplate)
-
+        UIGraphicsBeginImageContextWithOptions(sizeChange, false, 0)
+        tintColor.set() // set tint color
+        draw(in: CGRect(origin: .zero, size: sizeChange))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        resizedImage.withRenderingMode(.alwaysTemplate)
+        
         return resizedImage.withTintColor(tintColor)
-
+    
     }
     
 }

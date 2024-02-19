@@ -24,7 +24,7 @@ class LoginViewController: UIViewController {
     }
 
     //MARK: - IBActions
-    @IBAction func logInButtonPress(_ sender: UIButton) {
+    @IBAction private func logInButtonPress(_ sender: UIButton) {
         viewModel?.logIn()
     }
     

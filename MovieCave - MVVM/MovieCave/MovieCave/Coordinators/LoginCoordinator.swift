@@ -29,7 +29,7 @@ class LoginCoordinator: Coordinator, LoginCoordinatorDelegate {
         guard let logInVC = LoginViewController.initFromStoryBoard() else { return }
         
         identifier = Constants.loginCoordinatorID
-        logInVC.viewModel = LoginViewModel(coordinator: self, apiService: MovieDBService())
+        logInVC.viewModel = LoginViewModel(logInCoordinatorDelegate: self, apiService: MovieDBService())
         navController.pushViewController(logInVC, animated: true)
     }
     

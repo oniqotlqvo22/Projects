@@ -14,7 +14,7 @@ enum MockMovieDBManagerType {
 }
 
 class MovieDBManagerMock: MovieDBServiceProtocol {
-
+    
     var succesCase: MockMovieDBManagerType
     var operateWithAPIType: MediaType?
     var moviesList: MoviesList
@@ -50,9 +50,9 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                 mockTVSeriesAPICall(page: page, key: key, completion: completion)
             } else if R.self == TVSeriesDetailsData.self {
                 mockTVSeriesAPICall(page: page, key: key, completion: completion)
-            } else if R.self == TVSeriesCastData.self {
+            } else if R.self == MediaCastDecoder.self {
                 mockTVSeriesAPICall(page: page, key: key, completion: completion)
-            } else if R.self == TVSeriesVideosData.self {
+            } else if R.self == MediaVideosDecoder.self {
                 mockTVSeriesAPICall(page: page, key: key, completion: completion)
             }
         case .movies:
@@ -60,9 +60,9 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                 mockMoviesAPICall(page: page, key: key, completion: completion)
             } else if R.self == MovieDetailsData.self {
                 mockMoviesAPICall(page: page, key: key, completion: completion)
-            } else if R.self == MovieCast.self {
+            } else if R.self == MediaCastDecoder.self {
                 mockMoviesAPICall(page: page, key: key, completion: completion)
-            } else if R.self == MovieVideos.self {
+            } else if R.self == MediaVideosDecoder.self {
                 mockMoviesAPICall(page: page, key: key, completion: completion)
             }
         }
@@ -75,7 +75,7 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
             completion(.failure(.badData))
              return
         }
-        
+
         let results = [MovieResults(id: 10,
                                     originalTitle: key,
                                     overview: "COLD",
@@ -87,7 +87,7 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
         
         switch succesCase {
         case .sad:
-            operateWithAPIKey = key
+            operateWithAPIKey = ""
             let error = MovieDBErrors.badData.localizedDescription
             completion(.failure(.badData))
             apiCallError = error
@@ -102,29 +102,31 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                 if R.self == MovieDetailsData.self {
                     let details: MovieDetailsData = MovieDetailsData(genres: [],
                                                                      id: 10,
-                                                                     releaseDate: "10.10",
+                                                                     firstAirDate: "10.10",
                                                                      runtime: 20,
                                                                      voteAverage: 8,
                                                                      voteCount: 50,
                                                                      backdropPath: "BACK POSTER",
                                                                      posterPath: "BIG POSTER",
-                                                                     originalTitle: "TITLE",
+                                                                     name: "TITLE",
                                                                      overview: "OVERVIEW")
-                    mediaDetails = MediaDetails(title: details.originalTitle,
+                    mediaDetails = MediaDetails(title: details.name,
                                                 overview: details.overview,
                                                 id: details.id,
                                                 poster: details.posterPath ?? "POSTER",
                                                 bigPoster: details.backdropPath ?? "POSTTER",
                                                 avrgVote: "\(details.voteAverage)",
-                                                releaseDate: details.releaseDate,
+                                                releaseDate: details.firstAirDate,
                                                 gernes: details.genres.map{$0.name})
                     completion(.success(details as! R))
-                } else if R.self == MovieVideos.self {
-                    let videos: MovieVideos = MovieVideos(results: [MovieVideos.VideoResults(name: "MOVIE", key: "KEY", site: "MYSITE", type: "Trailer", id: "\(15)")])
+                    
+                } else if R.self == MediaVideosDecoder.self {
+                    let videos: MediaVideosDecoder = MediaVideosDecoder(results: [MediaVideosDecoder.VideoResults(name: "MOVIE", key: "KEY", site: "MYSITE", type: "Trailer", id: "\(15)")])
                     mediaVideos = MediaVideos(key: videos.results[0].key, name: videos.results[0].name)
                     completion(.success(videos as! R))
-                } else if R.self == MovieCast.self {
-                    let cast: MovieCast = MovieCast(cast: [MovieCast.CastDetails(name: "JOHN")])
+                    
+                } else if R.self == MediaCastDecoder.self {
+                    let cast: MediaCastDecoder = MediaCastDecoder(cast: [MediaCastDecoder.CastDetails(name: "JOHN")])
                     mediaCast = MediaCast(name: cast.cast[0].name)
                     completion(.success(cast as! R))
                 }
@@ -178,7 +180,7 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
         
         switch succesCase {
         case .sad:
-            operateWithAPIKey = key
+            operateWithAPIKey = ""
             let error = MovieDBErrors.badData.localizedDescription
             completion(.failure(.badData))
             apiCallError = error
@@ -206,12 +208,12 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                                                 releaseDate: details.firstAirDate,
                                                 gernes: details.genres.map{$0.name})
                     completion(.success(details as! R))
-                } else if R.self == TVSeriesVideosData.self {
-                    let videos: TVSeriesVideosData = TVSeriesVideosData(results: [TVSeriesVideosData.VideoResults(name: "VIDEO", key: "VIDEO", site: "MY", type: "Trailer", id: "\(22)")])
+                } else if R.self == MediaVideosDecoder.self {
+                    let videos: MediaVideosDecoder = MediaVideosDecoder(results: [MediaVideosDecoder.VideoResults(name: "VIDEO", key: "VIDEO", site: "MY", type: "Trailer", id: "\(22)")])
                     mediaVideos = MediaVideos(key: videos.results[0].key, name: videos.results[0].name)
                     completion(.success(videos as! R))
-                } else if R.self == TVSeriesCastData.self {
-                    let cast: TVSeriesCastData = TVSeriesCastData(cast: [TVSeriesCastData.CastDetails(name: "CASTER")])
+                } else if R.self == MediaCastDecoder.self {
+                    let cast: MediaCastDecoder = MediaCastDecoder(cast: [MediaCastDecoder.CastDetails(name: "CASTER")])
                     mediaCast = MediaCast(name: cast.cast[0].name)
                     completion(.success(cast as! R))
                 }
@@ -232,6 +234,45 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
                 operateWithAPIKey = key
                 completion(.success(data as! R))
                 apiCallTVSeriesResult = data
+            }
+        }
+    }
+    
+    func movieArrayCreation(operationType: MovieCave.APIOperations, with key: String, for list: MovieCave.MoviesList, page: Int, completion: @escaping (Result<[MovieCave.MoviesModel], MovieCave.MovieDBErrors>) -> Void) {
+        var model = [MoviesModel]()
+        
+        operateWithAPI(type: .movies, key: key, page: page, operationType: operationType, httpMethod: .get) { [weak self] (result: Result<MoviesData, MovieDBErrors>) in
+            
+            switch result {
+            case .success(let movies):
+                switch list {
+                case .allMovies:
+                    model.append(MoviesModel(movieResults: movies.results[0], isFavorite: false))
+                    completion(.success(model))
+                case .favorites:
+                    model.append(MoviesModel(movieResults: movies.results[0], isFavorite: true))
+                    completion(.success(model))
+                }
+                               
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func tvSeriesArrayCreation(with key: String, on page: Int, operationType: MovieCave.APIOperations, completion: @escaping (Result<[MovieCave.TVSeriesResults], MovieCave.MovieDBErrors>) -> Void) {
+        var model = [TVSeriesResults]()
+        
+        operateWithAPI(type: .tvSeries, key: key, page: page, operationType: operationType, httpMethod: .get) { [weak self] (result: Result<TVSeriesData, MovieDBErrors>) in
+            
+            switch result {
+            case .success(let series):
+                model.append(contentsOf: series.results)
+                completion(.success(model))
+            case .failure(let error):
+                guard self?.succesCase == .sad else { return }
+                
+                completion(.failure(error))
             }
         }
     }
@@ -262,8 +303,8 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
         }
         completion(favoriteMovies)
     }
-    
-    func menageFavoritesMovies(with movieID: Int, for operation: Favorites) {
+
+    func manageFavoritesMovies(with movieID: Int, for operation: Favorites) {
         let results = [MovieResults(id: 10,
                                      originalTitle: "key",
                                      overview: "COLD",
@@ -273,7 +314,15 @@ class MovieDBManagerMock: MovieDBServiceProtocol {
         case .happy:
             guard let movie = results.first(where: { $0.id == movieID }) else { return }
     
-            let movieModel: MoviesModel = MoviesModel(movieResults: movie, isFavorite: true)
+            let movieModel: MoviesModel?
+            
+            switch operation {
+            case .removeFromFavorites:
+                movieModel = MoviesModel(movieResults: movie, isFavorite: true)
+            case .addToFavorites:
+                movieModel = MoviesModel(movieResults: movie, isFavorite: true)
+            }
+            
             apiCallMoviesResult = movieModel
         case .sad:
             apiCallMoviesResult = nil

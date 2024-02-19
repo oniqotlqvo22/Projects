@@ -40,12 +40,12 @@ class MoviesDetailsViewModel: MoviesDetailsProtocol {
     var mediaVideos: CurrentValueSubject<[MediaVideos]?, Never> = CurrentValueSubject(nil)
     var mediaCast: CurrentValueSubject<[MediaCast]?, Never> = CurrentValueSubject(nil)
     var popUpMessage: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
-    weak var coordinator: MovieDetailsViewCoordinator?
+    weak var movieDetailsViewCoordinatorDelegate: MovieDetailsViewCoordinator?
     private var apiService: MovieDBServiceProtocol
     
     //MARK: - Initializer
-    init(mediaID: Int, coordinator: MovieDetailsViewCoordinator, apiService: MovieDBServiceProtocol, with type: MediaType) {
-        self.coordinator = coordinator
+    init(mediaID: Int, movieDetailsViewCoordinatorDelegate: MovieDetailsViewCoordinator, apiService: MovieDBServiceProtocol, with type: MediaType) {
+        self.movieDetailsViewCoordinatorDelegate = movieDetailsViewCoordinatorDelegate
         self.apiService = apiService
         movieDetails(mediaId: mediaID, with: type)
     }
@@ -62,15 +62,15 @@ class MoviesDetailsViewModel: MoviesDetailsProtocol {
         apiService.operateWithAPI(type: .movies, key: "\(key)", page: 1, operationType: .fetchMovieDetails, httpMethod: .get) { [weak self] (result: Result<MovieDetailsData, MovieDBErrors>) in
             
             switch result {
-            case .success(let series):
-                let movieDetails = MediaDetails(title: series.name,
-                                                overview: series.overview,
-                                                id: series.id,
-                                                poster: series.posterPath ?? Constants.noImageString,
-                                                bigPoster: series.backdropPath ?? Constants.noImageString,
-                                                avrgVote: "\(series.voteAverage.roundedToTwoDecimalPlaces())",
-                                                releaseDate: series.firstAirDate,
-                                                gernes: series.genres.map{$0.name})
+            case .success(let movie):
+                let movieDetails = MediaDetails(title: movie.name,
+                                                overview: movie.overview,
+                                                id: movie.id,
+                                                poster: movie.posterPath ?? Constants.noImageString,
+                                                bigPoster: movie.backdropPath ?? Constants.noImageString,
+                                                avrgVote: "\(movie.voteAverage.roundedToTwoDecimalPlaces())",
+                                                releaseDate: movie.firstAirDate,
+                                                gernes: movie.genres.map{$0.name})
                 self?.mediaDetails.send(movieDetails)
             case .failure(let error):
                 self?.popUpMessage.send(error.localizedDescription)

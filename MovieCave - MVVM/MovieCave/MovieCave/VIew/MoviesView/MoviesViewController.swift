@@ -18,7 +18,7 @@ class MoviesViewController: UIViewController, SpinnerProtocol {
     var spinnerView: UIView?
     private var favoriteButton: UIButton!
     private var popUp: PopUpView!
-    private var cancellables = [AnyCancellable]()
+    private var cancellables: [AnyCancellable] = []
     
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {

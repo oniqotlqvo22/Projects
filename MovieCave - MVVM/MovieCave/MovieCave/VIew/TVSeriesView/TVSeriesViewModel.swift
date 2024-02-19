@@ -38,11 +38,11 @@ protocol TVSeriesViewModelProtocol {
 class TVSeriesViewModel: TVSeriesViewModelProtocol {
     
     //MARK: - Properties
-    private weak var coordinator: TVSeriesViewCoordinatorDelegate?
+    private weak var tvSeriesViewCoordinatorDelegate: TVSeriesViewCoordinatorDelegate?
     private let movieDBService: MovieDBServiceProtocol
     private var currentPage: Int
     private var list: TVSeriesLists
-    private var seriesArray = [TVSeriesResults]()
+    private var seriesArray: [TVSeriesResults] = []
     private var currentSearchText: String = ""
     private var currentOperationType: APIOperations = .fetchSeries
     var fetchingDataSuccession: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
@@ -51,8 +51,8 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     let dataSource = CollectionViewDataSource<TVSeriesResults>(items: [])
     
     //MARK: - Initializer
-    init(coordinator: TVSeriesViewCoordinatorDelegate, movieDBService: MovieDBServiceProtocol, currentPage: Int, list: TVSeriesLists) {
-        self.coordinator = coordinator
+    init(tvSeriesViewCoordinatorDelegate: TVSeriesViewCoordinatorDelegate, movieDBService: MovieDBServiceProtocol, currentPage: Int, list: TVSeriesLists) {
+        self.tvSeriesViewCoordinatorDelegate = tvSeriesViewCoordinatorDelegate
         self.movieDBService = movieDBService
         self.currentPage = currentPage
         self.list = list
@@ -76,6 +76,8 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     }
     
     func filterSeries(_ filter: String) {
+        resetToFirstPage()
+        
         switch filter {
         case Constants.popularTVSeriesFilterButton:
             list = .popular
@@ -95,7 +97,7 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     }
 
     func sendSeriesDetails(with seriesID: Int) {
-        coordinator?.loadSeriesDetailsView(with: seriesID)
+        tvSeriesViewCoordinatorDelegate?.loadSeriesDetailsView(with: seriesID)
     }
 
     //MARK: - Private
@@ -105,11 +107,11 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
             
             switch result {
             case .success(let series):
-                guard !series.isEmpty else {
-                    self.fetchSeries(withFilter: withFilter, on: page - 1)
+                guard series.totalPages > page else {
+                    self.popUpMessage.send(Constants.noMorePages)
                     return }
                 
-                self.seriesArray.append(contentsOf: series)
+                self.seriesArray.append(contentsOf: series.results)
                 self.dataSource.items = self.seriesArray
                 self.fetchingDataSuccession.send(true)
             case .failure(let error):
@@ -124,12 +126,12 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
             
             switch result {
             case .success(let series):
-                guard !series.isEmpty else {
-                    self.searchTVSeries(with: query, on: page - 1)
+                guard series.totalPages > page else {
+                    self.popUpMessage.send(Constants.noMorePages)
                     return
                 }
                 
-                self.seriesArray.append(contentsOf: series)
+                self.seriesArray.append(contentsOf: series.results)
                 self.dataSource.items = self.seriesArray
                 self.fetchingDataSuccession.send(true)
             case .failure(let error):
@@ -153,22 +155,13 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
     private func resetToFirstPage() {
         currentPage = 1
         seriesArray.removeAll()
-        
-        switch currentOperationType {
-        case .fetchSeries:
-            fetchSeries(withFilter: list, on: currentPage)
-        case .searchSeriesByTitle:
-            searchTVSeries(with: currentSearchText, on: currentPage)
-        default:
-            break
-        }
+        resetPosition.send(true)
     }
     
     
     private func setUpData() {
-        dataSource.configureCell = { [weak self] cell, indexPath, item in
-            
-            cell.setTVSeries(with: item)
+        dataSource.configureCell = { [weak self] cell, indexPath, items in
+            cell.setTVSeries(with: items)
         }
         
         dataSource.didSelectItem = { [weak self] item in
@@ -181,7 +174,6 @@ class TVSeriesViewModel: TVSeriesViewModelProtocol {
         
         dataSource.resetToFirstPageHandler = { [weak self] in
             self?.resetToFirstPage()
-            self?.resetPosition.send(true)
         }
     }
     

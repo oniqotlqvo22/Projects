@@ -9,6 +9,7 @@ import Foundation
 
 struct MoviesData: Codable {
     var page: Int
+    var totalPages: Int
     var results: [MovieResults]
 }
 
@@ -52,6 +53,12 @@ struct MovieDetailsData: Codable {
 }
 
 struct MoviesModel {
+    var page: Int
+    var totalPages: Int
+    var modelResults: [MovieModelResults]
+}
+
+struct MovieModelResults {
     var movieResults: MovieResults
     var isFavorite: Bool
 }

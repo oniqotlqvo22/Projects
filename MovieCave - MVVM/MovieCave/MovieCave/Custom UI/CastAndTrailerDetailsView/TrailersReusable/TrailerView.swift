@@ -61,22 +61,22 @@ class TrailerView: UIView, TrailerViewProtocol {
     private func setUpLabelText(with text: String) {
         label.text = text
     }
-
+    
     private func setUpThumbnail(videoKey: String) {
         DispatchQueue.main.async { [weak imageView] in
             imageView?.downloaded(from: Links.youTubeThumbnail(videoKey))
-            }
+        }
     }
     
     private func setUpPlayImage() {
-        let playIconImage = UIImage(named: Constants.playButtonImage)?.resizeImage(targetSize: CGSize(width: 45, height: 35))
+        let playIconImage = UIImage(named: Constants.playButtonImage)?.resizeImage(targetSize: Constants.trailerPlayIconImageSize)
         let playIconImageView = UIImageView(image: playIconImage)
         playIconImageView.contentMode = .center
         playIconImageView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(playIconImageView)
         NSLayoutConstraint.activate([
             playIconImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            playIconImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -35)
+            playIconImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: Constants.playIconImageViewCenterYAnchorConstraintConst)
         ])
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(playButtonTapped))
@@ -85,11 +85,11 @@ class TrailerView: UIView, TrailerViewProtocol {
     }
     
     @objc private func playButtonTapped() {
-        UIView.animate(withDuration: 0.2, animations: {
-            self.alpha = 0.5
+        UIView.animate(withDuration: Constants.trailerPlayButtonAnimateDuration, animations: {
+            self.alpha = Constants.trailerPlayButtonAlphaOnPress
         }) { _ in
-            UIView.animate(withDuration: 0.2) {
-                self.alpha = 1.0
+            UIView.animate(withDuration: Constants.trailerPlayButtonAnimateDuration) {
+                self.alpha = Constants.trailerPlayButtonAlphaOnRelease
             }
         }
         delegate?.trailerViewDidTapPlayButton(self)
@@ -107,14 +107,14 @@ class TrailerView: UIView, TrailerViewProtocol {
         imageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: Constants.trailerImageViewHeightAnchorConstant).isActive = true
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8).isActive = true
+        label.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: Constants.trailerViewLabelTopAnchorConstraint).isActive = true
         label.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         label.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        label.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8).isActive = true
-        label.numberOfLines = 0
+        label.heightAnchor.constraint(equalToConstant: Constants.trailerViewLabelHeightAnchorConstraint).isActive = true
+        label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: Constants.trailerViewLabelBottomAnchorConstraint).isActive = true
+        label.numberOfLines = Constants.labelNumberOfLinesZero
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
         label.textColor = .white

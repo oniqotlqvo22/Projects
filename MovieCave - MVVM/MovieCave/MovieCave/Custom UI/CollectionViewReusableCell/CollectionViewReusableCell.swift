@@ -7,14 +7,18 @@
 
 import UIKit
 
-protocol CollectionViewReusableCellProtocol {
+protocol CollectionViewReusableCellProtocolForSeries {
+    
     /// Configures the cell to display data for a TV show.
     /// - Parameter series: The TV show data to display.
     func setTVSeries(with series: TVSeriesResults)
+}
+
+protocol CollectionViewReusableCellProtocolForMovies{
     
     /// Configures the cell to display data for a movie.
     /// - Parameter movies: The movie data to display.
-    func setMovies(with movies: MoviesModel)
+    func setMovies(with movies: MovieModelResults)
 }
 
 protocol FavoriteButtonDelegate: AnyObject {
@@ -24,7 +28,7 @@ protocol FavoriteButtonDelegate: AnyObject {
     func buttonClicked(index: Int)
 }
 
-class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCellProtocol {
+class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCellProtocolForSeries, CollectionViewReusableCellProtocolForMovies {
     
     //MARK: - Properties
     weak var delegate: FavoriteButtonDelegate?
@@ -41,12 +45,11 @@ class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCe
     }()
     var movieIindex: Int?
     
-    
     func setTVSeries(with series: TVSeriesResults) {
         imageView.downloaded(from: Constants.moviePosterURL + (series.posterPath ?? Constants.noImageString), contentMode: .scaleAspectFit)
     }
     
-    func setMovies(with movie: MoviesModel) {
+    func setMovies(with movie: MovieModelResults) {
         favortieStarButtonChange(movie: movie)
         imageView.downloaded(from: Constants.moviePosterURL + (movie.movieResults.posterPath ?? Constants.noImageString), contentMode: .scaleAspectFit)
     }
@@ -54,23 +57,17 @@ class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCe
     func setUpFavoriteButtonDelegate(for delegate: FavoriteButtonDelegate) {
         self.delegate = delegate
     }
-    
-    @objc func favoriteButtonTapped(_ sender: UIButton) {
-        guard let movieIindex else { return }
-        
-        delegate?.buttonClicked(index: movieIindex)
-    }
 
     //MARK: - Initiaizers
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.layer.borderWidth = 2
-        self.layer.cornerRadius = 10
-        self.clipsToBounds = true
+        layer.borderWidth = Constants.collectionViewReusableCellLayerBorderWidth
+        layer.cornerRadius = Constants.collectionViewReusableCellLayerCornerRadius
+        clipsToBounds = true
         contentView.addSubview(imageView)
         contentView.clipsToBounds = true
         
-        favoriteButton = UIButton(frame: CGRect(x:1, y:1, width:35,height:35))
+        favoriteButton = UIButton(frame: Constants.reusableCellFavoriteButtonFrame)
         favoriteButton.addTarget(self, action: #selector(self.favoriteButtonTapped), for: .touchUpInside)
         self.addSubview(favoriteButton)
     }
@@ -90,12 +87,19 @@ class CollectionViewReusableCell: UICollectionViewCell, CollectionViewReusableCe
         imageView.image = nil
     }
     
-    private func favortieStarButtonChange(movie: MoviesModel) {
+    //MARK: - Private methods
+    private func favortieStarButtonChange(movie: MovieModelResults) {
         DispatchQueue.main.async {
             movie.isFavorite
             ? self.favoriteButton.setImage(self.filledStar, for: .normal)
             : self.favoriteButton.setImage(self.emptyStar, for: .normal)
         }
+    }
+    
+    @objc private func favoriteButtonTapped(_ sender: UIButton) {
+        guard let movieIindex else { return }
+        
+        delegate?.buttonClicked(index: movieIindex)
     }
     
 }

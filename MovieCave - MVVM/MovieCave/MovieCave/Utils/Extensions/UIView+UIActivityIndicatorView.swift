@@ -31,6 +31,5 @@ extension SpinnerProtocol {
             self.spinnerView?.removeFromSuperview()
             self.spinnerView = nil
         }
-        
     }
 }

@@ -7,17 +7,25 @@
 
 import UIKit
 
-class TrailerVideosView: UIStackView{
+protocol TrailerVideosViewProtocol: UIStackView {
+    
+    /// Sets up trailer views based on the provided trailers and delegate.
+    /// - Parameters:
+    ///   - trailers: An array of `MediaVideos` representing the trailers.
+    ///   - trailerViewDelegate: An instance conforming to `TrailerViewDelegate` to handle trailer view actions.
+    func setUpTrailers(with trailers: [MediaVideos], trailerViewDelegate: TrailerViewDelegate)
+}
+class TrailerVideosView: UIStackView, TrailerVideosViewProtocol {
     
     //MARK: - Properties
     private var trailerViews = [TrailerView]()
     
     //MARK: - Public Methods
     func setUpTrailers(with trailers: [MediaVideos], trailerViewDelegate: TrailerViewDelegate) {
-        self.spacing = 8
+        spacing = Constants.trailerVideosViewSpacing
         for video in trailers {
             let trailerView = TrailerView()
-            trailerView.configureView(videoKey: video.key, labelText: video.name, widthAnchorConst: 120)
+            trailerView.configureView(videoKey: video.key, labelText: video.name, widthAnchorConst: Constants.trailerViewWidthAnchorConst)
             trailerView.delegate = trailerViewDelegate
             addArrangedSubview(trailerView)
         }
@@ -28,7 +36,7 @@ class TrailerVideosView: UIStackView{
         for genreLabel in trailerViews {
             genreLabel.removeFromSuperview()
         }
-
+        
         trailerViews.removeAll()
     }
 }

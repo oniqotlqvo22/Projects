@@ -8,6 +8,8 @@
 import Foundation
 
 struct FavoriteList: Codable {
+    var page: Int
+    var totalPages: Int
     var items: [FavoriteResult]
 }
 

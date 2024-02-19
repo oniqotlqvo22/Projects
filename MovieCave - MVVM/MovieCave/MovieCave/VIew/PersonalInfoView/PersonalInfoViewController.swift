@@ -12,7 +12,7 @@ class PersonalInfoViewController: UIViewController {
 
     //MARK: - Properties
     var viewModel: PersonalInfoViewModelProtocol?
-    private var cancellables = [AnyCancellable]()
+    private var cancellables: [AnyCancellable] = []
     private var popUp: PopUpView!
     
     //MARK: - Lifecycle Methods
